@@ -60,6 +60,19 @@ if (isset($_GET['logout'])) {
 
 				<?php endif ?>
 			</div>
+
+			<form action="home.php" method="post">
+				<label>Date</label>
+				<input type="date" name="date_evenement" id="date_evenement" value="">
+				
+				<label>Lieu</label>
+				<input type="text" name="lieu" id="lieu">
+			
+				<label>Place disponibles</label>
+				<input type="number" name="number" id="number">	
+				
+				<button type="submit" class="btn" name="notif_btn">envoie</button>
+			</form>
 		</div>
 	</div>
 </body>
