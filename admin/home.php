@@ -16,7 +16,7 @@ if (isset($_GET['logout'])) {
 <html>
 <head>
 	<title>Home</title>
-	<link rel="stylesheet" type="text/css" href="../style.css">
+	<link rel="stylesheet" type="text/css" href="/../assets/css/style.css">
 	<style>
 	.header {
 		background: #003366;
@@ -29,6 +29,15 @@ if (isset($_GET['logout'])) {
 <body>
 	<div class="header">
 		<h2>Admin - Home Page</h2>
+		<p>
+		<?php
+
+
+			// $seasonUser  =  $_POST['season_user'];
+
+		?>
+		</p>
+
 	</div>
 	<div class="content">
 		<!-- notification message -->
@@ -55,24 +64,11 @@ if (isset($_GET['logout'])) {
 						<i  style="color: #888;">(<?php echo ucfirst($_SESSION['user']['user_type']); ?>)</i> 
 						<br>
 						<a href="home.php?logout='1'" style="color: red;">logout</a>
-                       &nbsp; <a href="create_user.php"> + add user</a>
+                       &nbsp; <a href="create_user.php"> + add user</a> <a href="create_season.php"> + add season</a><a href="create_notif.php"> + add notif</a>
 					</small>
 
 				<?php endif ?>
 			</div>
-
-			<form action="home.php" method="post">
-				<label>Date</label>
-				<input type="date" name="date_events" id="date_events" value="">
-				
-				<label>Lieu</label>
-				<input type="text" name="lieu_events" id="lieu_events">
-			
-				<label>Place disponibles</label>
-				<input type="number" name="dispo_events" id="dispo_events">	
-				
-				<button type="submit" class="btn" name="notif_btn">envoie</button>
-			</form>
 		</div>
 	</div>
 </body>

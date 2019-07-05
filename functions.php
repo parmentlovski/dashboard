@@ -15,12 +15,12 @@ if (isset($_POST['register_btn'])) {
 	register();
 }
 
-if (isset($_POST['notif_btn'])) {
-	add_date();
-}
-
 if (isset($_POST['season_btn'])) {
 	createSeason();
+}
+
+if (isset($_POST['notif_btn'])) {
+	createNotif();
 }
 
 // REGISTER USER
@@ -35,7 +35,19 @@ function register()
 	$email       =  $_POST['email'];
 	$password_1  =  $_POST['password_1'];
 	$password_2  =  $_POST['password_2'];
+	$season = $_POST['season_user'];
 
+	$sql_u = "SELECT * FROM users WHERE username=:username";
+	$sth = $db->prepare($sql_u);
+	$sth->bindParam(':username', $username, PDO::PARAM_STR);
+	$sth->execute();
+	$result_u = $sth->fetchAll(PDO::FETCH_ASSOC);
+
+	$sql_e = "SELECT * FROM users WHERE email=:email";
+	$sth = $db->prepare($sql_e);
+	$sth->bindParam(':email', $email, PDO::PARAM_STR);
+	$sth->execute();
+	$result_e = $sth->fetchAll(PDO::FETCH_ASSOC);
 
 	// form validation: ensure that the form is correctly filled
 	if (empty($username)) {
@@ -51,70 +63,48 @@ function register()
 		array_push($errors, "The two passwords do not match");
 	}
 
-	if (count($result_u) > 0) {
+	if (Count($result_u) > 0) {
 		array_push($errors, "Sorry... username already taken");
-	}
-
-	if (count($result_e) > 0) {
+	} else if (Count($result_e) > 0) {
 		array_push($errors, "Sorry... email already taken");
-	}
-	if (count($errors) == 0) {
-		$password = md5($password_1); //encrypt the password before saving in the database
-		$user_type = $_POST['user_type'];
-		$sql = "INSERT INTO users (username, email, user_type, password) 
+	} else {
+		// register user if there are no errors in the form
+		if (count($errors) == 0) {
+			$password = md5($password_1); //encrypt the password before saving in the database
+			$user_type = $_POST['user_type'];
+			$sql = "INSERT INTO users (username, email, user_type, password) 
 					  VALUES(:username, :email, :user_type, :password)";
-		$sth = $db->prepare($sql);
-		$sth->bindParam(':username', $username, PDO::PARAM_STR);
-		$sth->bindParam(':email', $email, PDO::PARAM_STR);
-		$sth->bindParam(':user_type', $user_type, PDO::PARAM_STR);
-		$sth->bindParam(':password', $password, PDO::PARAM_STR);
-		$sth->execute();
+			$sth = $db->prepare($sql);
+			$sth->bindParam(':username', $username, PDO::PARAM_STR);
+			$sth->bindParam(':email', $email, PDO::PARAM_STR);
+			$sth->bindParam(':user_type', $user_type, PDO::PARAM_STR);
+			$sth->bindParam(':password', $password, PDO::PARAM_STR);
+			$sth->execute();
 
-		// $last_id = $db->lastInsertId();
-		// var_dump($last_id);
-		// $seasonUser  =  $_POST['season_user'];
+			$last_id = $db->lastInsertId();
 
-		$_SESSION['success']  = "New user successfully created!!";
-		header('location: home.php');
+
+			$sql_s = "SELECT * FROM saison WHERE date_saison='$season'";
+			$sth_s = $db->prepare($sql_s);
+			$sth_s->bindParam(':date_saison', $season, PDO::PARAM_STR);
+			$sth_s->execute();
+			$result = $sth_s->fetchAll();
+			$idSeason = $result[0]["id_saison"];
+			echo $idSeason;
+			echo $last_id;
+
+			$sql = "INSERT INTO inscription (user_identifiant, saison_id) 
+					  VALUES(:user_identifiant, :saison_id)";
+			$sth = $db->prepare($sql);
+			$sth->bindParam(':user_identifiant', $last_id, PDO::PARAM_INT);
+			$sth->bindParam(':saison_id', $idSeason, PDO::PARAM_STR);
+			$sth->execute();
+
+
+			$_SESSION['success']  = "New user successfully created!!";
+			header('Location: home.php');
+		}
 	}
-}
-
-
-function notifInit()
-{
-	global $db;
-	// $date_event = $_POST['date_event'];
-	$lieu = $_POST['lieu'];
-	// var_dump($date_event);
-	var_dump($lieu);
-
-	// $sql_date = "SELECT * FROM planning WHERE date_event=:date_event";
-	// $sth = $db->prepare($sql_date);
-	// $sth->bindParam(':date_event', $date_event, PDO::PARAM_STR);
-	// $sth->execute();
-	// $result_date = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// var_dump($result_date);
-
-	// $sql_lieu = "SELECT * FROM planning WHERE lieu=:lieu";
-	// $sth = $db->prepare($sql_lieu);
-	// $sth->bindParam(':lieu', $lieu, PDO::PARAM_STR);
-	// $sth->execute();
-	// $result_lieu = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// var_dump($result_lieu);
-
-	// if (count($result_date) == 0) {
-	// 	$sql1 = "INSERT INTO planning (date_event)
-	// 	VALUE(:date_event)";
-	// 	$sth = $db->prepare($sql1);
-	// 	$sth->bindParam(':date_event', $date_event, PDO::PARAM_STR);
-	// 	$sth->execute();
-	// }
-
-		$sql = "INSERT INTO planning (lieu)
-		VALUES(:lieu)";
-		$sth = $db->prepare($sql);
-		$sth->bindParam(':lieu', $lieu, PDO::PARAM_STR);
-		$sth->execute();
 }
 
 // return user array from their id
@@ -127,49 +117,6 @@ function notifInit()
 // 	echo'ici';
 // 	return $user;
 // }
-
-function add_date()
-{
-
-// ajout de la date de l'evenement
-global $db, $errors;
-$dateEvent = $_POST['date_events'];
-$lieuMatch = $_POST['lieu_events'];
-$dispoEvent = $_POST['dispo_events'];
-
-if (empty($dateEvent)) {
-array_push($errors, "Username is required");
-}
-if (empty($lieuMatch)) {
-array_push($errors, "Email is required");
-}
-if (empty($dispoEvent)) {
-array_push($errors, "Password is required");
-}
-// $sql = "INSERT INTO saison (date_saison)
-// VALUES('$season')";
-// $sth = $db->prepare($sql);
-// $sth->execute();
-
-// Requete insert mon formulaire dans la table planning
-$sql = "INSERT INTO planning (date_event, lieu, places_dispo)
-VALUES(:date_event, :lieu, :places_dispo)";
-$sth = $db->prepare($sql);
-$sth->bindParam(':date_event', $dateEvent, PDO::PARAM_STR);
-$sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
-$sth->bindParam(':places_dispo', $dispoEvent, PDO::PARAM_STR);
-$sth->execute();
-
-
-// je vais sortir mes date d'evenement de la table planning
-$stmt = $db->prepare("SELECT * FROM planning");
-if ($stmt->execute(array())) {
-while ($row = $stmt->fetch()) {
-echo $row[0]. '<br>';
-}
-}
-
-} 
 
 function createSeason()
 {
@@ -189,6 +136,62 @@ function createSeason()
 		$sth->execute();
 		$_SESSION['success']  = "New user successfully created!!";
 		header('location: home.php');
+	}
+}
+
+function createNotif()
+{
+	// ajout de la date de l'evenement
+	global $db, $errors, $users;
+	$dateEvent = $_POST['date_event'];
+	$lieuMatch = $_POST['lieu_event'];
+	$dispoEvent = $_POST['dispo_event'];
+	$noReponse = NULL;
+
+	if (empty($dateEvent)) {
+		array_push($errors, "Date is required");
+	}
+	if (empty($lieuMatch)) {
+		array_push($errors, "Place is required");
+	}
+	if (empty($dispoEvent)) {
+		array_push($errors, "Dispo is required");
+	}
+	// $sql = "INSERT INTO saison (date_saison) 
+	// VALUES('$season')";
+	// $sth = $db->prepare($sql);
+	// $sth->execute();
+
+	// Requete insert mon formulaire dans la table planning
+	$sql = "INSERT INTO planning (jour_event, lieu, places_necessaires) 
+		VALUES(:jour_event, :lieu, :places_necessaires)";
+	$sth = $db->prepare($sql);
+	$sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
+	$sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
+	$sth->bindParam(':places_necessaires', $dispoEvent, PDO::PARAM_STR);
+	$sth->execute();
+
+	// je vais sortir mes date d'evenement de la table planning
+	// $stmt = $db->prepare("SELECT * FROM planning");
+	// if ($stmt->execute(array())) {
+	// while ($row = $stmt->fetch()) {
+	// echo $row[0]. '<br>';
+	// }
+	// }
+
+	$sql_u = "SELECT id FROM users";
+	$sth_u = $db->prepare($sql_u);
+	$sth_u->execute();
+	$result = $sth_u->fetchAll(PDO::FETCH_ASSOC);
+
+	// output data of each row
+	foreach ( $result as $users => $sql_u) {
+		$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse) VALUES(:jour_event, :id_user, :reponse)";
+		$sth = $db->prepare($sql_b);
+		$sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
+		$sth->bindParam(':id_user', $sql_u["id"], PDO::PARAM_INT);
+		$sth->bindParam(':reponse', $noReponse, PDO::PARAM_STR);
+		$sth->execute();
 	}
 }
 
