@@ -24,7 +24,8 @@
 
 		<div class="input-group">
 			<label>Username</label>
-			<input type="text" name="username" value="<?php echo $username; ?>">
+			<input type="text" name="username" 
+			 ?>">
 		</div>
 		<div class="input-group">
 			<label>Email</label>

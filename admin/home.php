@@ -63,13 +63,13 @@ if (isset($_GET['logout'])) {
 
 			<form action="home.php" method="post">
 				<label>Date</label>
-				<input type="date" name="date_evenement" id="date_evenement" value="">
+				<input type="date" name="date_events" id="date_events" value="">
 				
 				<label>Lieu</label>
-				<input type="text" name="lieu" id="lieu">
+				<input type="text" name="lieu_events" id="lieu_events">
 			
 				<label>Place disponibles</label>
-				<input type="number" name="number" id="number">	
+				<input type="number" name="dispo_events" id="dispo_events">	
 				
 				<button type="submit" class="btn" name="notif_btn">envoie</button>
 			</form>
