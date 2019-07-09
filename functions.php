@@ -23,6 +23,10 @@ if (isset($_POST['notif_btn'])) {
 	createNotif();
 }
 
+if (isset($_POST['reponse_btn'])) {
+	reponse();
+}
+
 // REGISTER USER
 function register()
 {
@@ -107,6 +111,11 @@ function register()
 	}
 }
 
+$sqlUp = "UPDATE users SET username=test3 WHERE id=4";
+		$sthUp = $db->prepare($sqlUp);
+		$sthUp->bindParam(':username', $username, PDO::PARAM_STR);
+		$sthUp->execute();
+
 // return user array from their id
 // function getUserById($id)
 // {
@@ -131,10 +140,11 @@ function createSeason()
 	if (count($errors) == 0) {
 
 		$sql = "INSERT INTO saison (date_saison) 
-		VALUES('$season')";
+		VALUES(:season)";
 		$sth = $db->prepare($sql);
+		$sth->bindParam(':season', $season, PDO::PARAM_STR);
 		$sth->execute();
-		$_SESSION['success']  = "New user successfully created!!";
+		$_SESSION['success']  = "New season successfully created!!";
 		header('location: home.php');
 	}
 }
@@ -157,10 +167,6 @@ function createNotif()
 	if (empty($dispoEvent)) {
 		array_push($errors, "Dispo is required");
 	}
-	// $sql = "INSERT INTO saison (date_saison) 
-	// VALUES('$season')";
-	// $sth = $db->prepare($sql);
-	// $sth->execute();
 
 	// Requete insert mon formulaire dans la table planning
 	$sql = "INSERT INTO planning (jour_event, lieu, places_necessaires) 
@@ -171,28 +177,12 @@ function createNotif()
 	$sth->bindParam(':places_necessaires', $dispoEvent, PDO::PARAM_STR);
 	$sth->execute();
 
-	// je vais sortir mes date d'evenement de la table planning
-	// $stmt = $db->prepare("SELECT * FROM planning");
-	// if ($stmt->execute(array())) {
-	// while ($row = $stmt->fetch()) {
-	// echo $row[0]. '<br>';
-	// }
-	// }
-
-	$sql_u = "SELECT id FROM users";
-	$sth_u = $db->prepare($sql_u);
-	$sth_u->execute();
-	$result = $sth_u->fetchAll(PDO::FETCH_ASSOC);
-
-	// output data of each row
-	foreach ( $result as $users => $sql_u) {
-		$sql_b = "INSERT INTO response_parent (jour_event, id_user, reponse) VALUES(:jour_event, :id_user, :reponse)";
-		$sth = $db->prepare($sql_b);
-		$sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
-		$sth->bindParam(':id_user', $sql_u["id"], PDO::PARAM_INT);
-		$sth->bindParam(':reponse', $noReponse, PDO::PARAM_STR);
-		$sth->execute();
-	}
+	$sql_b = "INSERT INTO response_parent (jour_event, id_user) VALUES(:jour_event, :id_user)";
+	$sth = $db->prepare($sql_b);
+	$sth->bindParam(':jour_event', $_POST["date_event"], PDO::PARAM_STR);
+	$sth->bindParam(':id_user', $_SESSION['id'], PDO::PARAM_INT);
+	$sth->execute();
+	var_dump($_POST["date_event"]);
 }
 
 function display_error()
@@ -261,6 +251,7 @@ function login()
 		if ($results->rowCount() == 1) { // user found
 			// check if user is admin or user
 			$logged_in_user = $results->fetch(PDO::FETCH_ASSOC);
+			$_SESSION['id'] = $logged_in_user['id'];
 
 			if ($logged_in_user['user_type'] == 'admin') {
 
@@ -287,3 +278,115 @@ function isAdmin()
 		return false;
 	}
 }
+
+function showNotif() {
+	global $db, $dateEvent, $lieuMatch, $dispoEvent;
+
+	$sql = "SELECT * FROM planning";
+	$sth = $db->prepare($sql);
+	$sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
+	$sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
+	$sth->bindParam(':places_necessaires', $dispoEvent, PDO::PARAM_STR);
+	$sth->execute();
+	$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+	// $resultArray = $result[0]['jour_event'];
+
+	// var_dump($resultArray);
+
+		foreach($result as $row) {
+			?><ul>
+				<li><?php echo $row['jour_event']; ?></li>
+				<li><?php echo $row['lieu']; ?></li>
+				<li><?php echo $row['places_necessaires']; ?></li>
+			</ul> 
+		
+			<?php
+		}
+
+}
+?>
+<?php
+
+
+function reponse() {
+	global $db, $errors; 
+
+
+	$name = $_SESSION['id'];
+	var_dump($name);
+	$dateE = $_POST['jour_event'];
+	var_dump($dateE);
+	$placeReservees = $_POST['places_reservees'];
+	var_dump($placeReservees);
+
+
+	if(isset($_POST['reponseOui']) && isset($_POST['reponseNon'])) {
+		array_push($errors, "One answer is required");
+	  }
+
+	  if(count($errors) == 0) { 
+		  
+		if(!empty($_POST['reponseOui'])) {
+		$sqlOui = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name',	true, '$placeReservees')";
+		$sthOui = $db->prepare($sqlOui);
+		$sthOui->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
+		$sthOui->bindParam(':id_user', $name, PDO::PARAM_STR);
+		$sthOui->bindValue(':reponse', true, PDO::PARAM_BOOL);
+		$sthOui->bindParam(':places_reservees', $placeReservees, PDO::PARAM_INT);
+		$sthOui->execute();
+
+		if (empty($dateE)) {
+			array_push($errors, "Date is required");
+		}
+		if (empty($placeReservees)) {
+			array_push($errors, "Number is required");
+		}
+	  }
+	  
+	  else if (!empty($_POST['reponseNon'])) {
+		$placesNon = 0; 
+
+		$sqlNon = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name', false, '$placesNon')";
+		$sthNon = $db->prepare($sqlNon);
+		$sthNon->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
+		$sthNon->bindParam(':id_user', $name, PDO::PARAM_STR);
+		$sthNon->bindValue(':reponse', false, PDO::PARAM_BOOL);
+		$sthNon->bindParam(':places_reservees', $placesNon, PDO::PARAM_INT);
+		$sthNon->execute();
+
+		if (empty($dateE)) {
+			array_push($errors, "Date is required");
+		}
+	  } 
+	}
+	
+
+	// $placesReservees = $_POST['places_reservees'];
+}
+
+// var_dump($placesReponses);
+	// $planning = "SELECT planning";
+
+	// $sql = "SELECT places_necessaires FROM planning";
+	// $sth = $db->prepare($sql);
+	// $sth->execute();
+	// $placesNecessaires = $sth->fetchAll(PDO::FETCH_ASSOC);
+	// $placesNecessairesArray = $placesNecessaires[0]['places_necessaires'];
+	// var_dump($placesNecessairesArray);
+	
+	// $sqlJ = "SELECT jour_event FROM planning";
+	// $sthJ = $db->prepare($sqlJ);
+	// $sthJ->execute();
+	// $dates = $sthJ->fetchAll(PDO::FETCH_ASSOC);
+	// // var_dump($dates);
+	// $datesArray = $dates[0]['jour_event'];
+	// // var_dump($datesArray);
+	// // var_dump($dates);
+
+	// $sql = "SELECT places_reservees FROM planning";
+	// $sth = $db->prepare($sql);
+	// $sth->execute();
+	// $placesReserveesInit = $sth->fetchAll(PDO::FETCH_ASSOC);
+	// // var_dump($dates);
+	// $placesReserveesArray = $placesReserveesInit[0]['places_reservees'];
+	// var_dump($placesReserveesArray); 

@@ -80,7 +80,9 @@ if (!isLoggedIn()) {
     <!-- logged in user information -->
     <div class="profile_info">
       <img src="images/user_profile.png">
-     
+      <form method="post" action="index.php">
+        
+      </form>
 
     </div>
   </div>
