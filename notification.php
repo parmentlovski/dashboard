@@ -68,6 +68,7 @@ include('functions.php');
         <label for="reponseOui">Oui</label>
         <input type='checkbox' id='non' name='reponseNon' value='non'>
         <label for="reponseNon">Non</label>
+        <label for="jour_event">Date de l'évènement</label>
         <select name="jour_event" id="jour_event">
             <?php
 
@@ -77,29 +78,43 @@ include('functions.php');
             $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
             $sth->execute();
             $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-
             if (count($result) > 0) {
+              global $placesDispo;
               // output data of each row
               foreach ($result as $planning) {
-                ?><option><?php echo $planning["jour_event"];?></option>
-              <?php
+                // ?><option><?php echo $planning["jour_event"];?></option>
+                   <?php foreach($placesDispo as $row) {
+                // ?><option><?php echo $row[$placesDispo];?></option>
+                     
+                    <?php 
+                   }
               }
             }
             ?>
           </select>
 
         <div id="block-reponse" class="dn">
-          <input type='number' id='places_reservees' name='places_reservees'>
           <label for='places_reservees'>Combien de personnes ?</label>
-          
+          <input type='number' id='places_reservees' name='places_reservees' min="0" max="<?php global $placesDispo; echo $placesDispo ;?>">
         </div>
         <button type="submit" class="btn" name="reponse_btn">reponse</button>
         <?php echo display_error(); ?>
         <?php echo display_validation(); ?>
+        
+        
+
+        <?php
+          $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, response_parent.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM response_parent LEFT JOIN planning ON response_parent.jour_event = planning.jour_event GROUP BY response_parent.jour_event ";
+          $sthC = $db->prepare($sqlC);
+          $sthC->execute();
+          $countPlaces = $sthC->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+        <script> var tableau_date = <?php echo json_encode($countPlaces) ?>; </script>
 
     </form>
 
     <?php
+            print_r($result);
 
     showNotif();; ?>
 
