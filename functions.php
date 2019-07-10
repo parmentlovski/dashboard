@@ -9,6 +9,7 @@ $username = "";
 $email    = "";
 $season    = "";
 $errors   = array();
+$validations = array();
 
 // call the register() function if register_btn is clicked
 if (isset($_POST['register_btn'])) {
@@ -112,9 +113,9 @@ function register()
 }
 
 $sqlUp = "UPDATE users SET username=test3 WHERE id=4";
-		$sthUp = $db->prepare($sqlUp);
-		$sthUp->bindParam(':username', $username, PDO::PARAM_STR);
-		$sthUp->execute();
+$sthUp = $db->prepare($sqlUp);
+$sthUp->bindParam(':username', $username, PDO::PARAM_STR);
+$sthUp->execute();
 
 // return user array from their id
 // function getUserById($id)
@@ -198,6 +199,19 @@ function display_error()
 	}
 }
 
+function display_validation()
+{
+	global $validations;
+
+	if (count($validations) > 0) {
+		echo '<div class="success">';
+		foreach ($validations as $validation) {
+			echo $validation . '<br>';
+		}
+		echo '</div>';
+	}
+}
+
 function isLoggedIn()
 {
 	if (isset($_SESSION['user'])) {
@@ -238,17 +252,21 @@ function login()
 
 	// attempt login if no errors on form
 	if (count($errors) == 0) {
+
 		$password = md5($password);
 
 		$sql = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
 		$sth = $db->prepare($sql);
+		// $sth->bindParam(':username', $username, PDO::PARAM_STR);
+		// $sth->bindParam(':password', $password, PDO::PARAM_STR);
 		$sth->execute();
 		$results = $db->query($sql);
 
-		// $query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
-		// $result = $db->query($query);
 
-		if ($results->rowCount() == 1) { // user found
+		// $query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
+		// $result = $db->query($sql);
+
+		if (count($results) == 1) { // user found
 			// check if user is admin or user
 			$logged_in_user = $results->fetch(PDO::FETCH_ASSOC);
 			$_SESSION['id'] = $logged_in_user['id'];
@@ -279,91 +297,112 @@ function isAdmin()
 	}
 }
 
-function showNotif() {
-	global $db, $dateEvent, $lieuMatch, $dispoEvent;
+function reponse()
+{
+	global $db, $errors, $validations;
 
-	$sql = "SELECT * FROM planning";
+	$name = $_SESSION['id'];
+	// var_dump($name);
+	$dateE = $_POST['jour_event'];
+	// var_dump($dateE);
+	$placeReservees = $_POST['places_reservees'];
+	// var_dump($placeReservees);
+
+
+	if (isset($_POST['reponseOui']) && isset($_POST['reponseNon'])) {
+		array_push($errors, "One answer is required");
+	}
+
+	if (count($errors) == 0) {
+
+		if (!empty($_POST['reponseOui'])) {
+			if (empty($dateE)) {
+				array_push($errors, "Date is required");
+			}
+			if (empty($placeReservees)) {
+				array_push($errors, "Number is required");
+			}
+
+			$sqlOui = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name', true, '$placeReservees')";
+			$sthOui = $db->prepare($sqlOui);
+			$sthOui->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
+			$sthOui->bindParam(':id_user', $name, PDO::PARAM_STR);
+			$sthOui->bindValue(':reponse', true, PDO::PARAM_BOOL);
+			$sthOui->bindParam(':places_reservees', $placeReservees, PDO::PARAM_INT);
+			$sthOui->execute();
+
+			$sqlRp = "SELECT places_reservees FROM response_parent";
+			$sthRp = $db->prepare($sqlRp);
+			$sthRp->execute();
+			$placesReservees = $sthRp->fetchAll(PDO::FETCH_ASSOC);
+			$placesReserveesArray = $placesReservees[0]['places_reservees'];
+			var_dump($placesReserveesArray);
+
+			$sql = "SELECT places_necessaires FROM planning WHERE jour_event='$dateE' ";
+			$sth = $db->prepare($sql);
+			$sth->execute();
+			$placesNecessaires = $sth->fetchAll(PDO::FETCH_ASSOC);
+			$placesNecessairesArray = $placesNecessaires[0]['places_necessaires'];
+			var_dump($placesNecessairesArray);
+			var_dump($placeReservees);
+
+			$sqlC = "SELECT SUM(places_reservees) FROM response_parent WHERE jour_event='$dateE'";
+			$sthC = $db->prepare($sqlC);
+			$sthC->execute();
+			$countPlaces = $sthC->fetchAll(PDO::FETCH_ASSOC);
+			var_dump($countPlaces);
+			$countArray = $countPlaces[0]["SUM(places_reservees)"];
+			var_dump($countArray);
+
+			if ($countArray >= $placesNecessairesArray) {
+				array_push($errors, "Le nombre de places nécessaires est atteinte");
+			}
+			if ($countArray < $placesNecessairesArray) {
+				$placesDispo = $placesNecessairesArray - $countArray;
+				array_push($validations, "Il reste " . $placesDispo . " places");
+			}
+		} else if (!empty($_POST['reponseNon'])) {
+			$placesNon = 0;
+
+			$sqlNon = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name', false, '$placesNon')";
+			$sthNon = $db->prepare($sqlNon);
+			$sthNon->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
+			$sthNon->bindParam(':id_user', $name, PDO::PARAM_STR);
+			$sthNon->bindValue(':reponse', false, PDO::PARAM_BOOL);
+			$sthNon->bindParam(':places_reservees', $placesNon, PDO::PARAM_INT);
+			$sthNon->execute();
+
+			if (empty($dateE)) {
+				array_push($errors, "Date is required");
+			}
+		}
+	}
+	// $placesReservees = $_POST['places_reservees'];
+}
+
+function showNotif()
+{
+	global $db, $dateEvent, $lieuMatch, $dispoEvent ;
+
+	$sql = "SELECT * FROM planning ";
 	$sth = $db->prepare($sql);
 	$sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
 	$sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
 	$sth->bindParam(':places_necessaires', $dispoEvent, PDO::PARAM_STR);
 	$sth->execute();
 	$result = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// $resultArray = $result[0]['jour_event'];
-
-	// var_dump($resultArray);
-
-		foreach($result as $row) {
-			?><ul>
-				<li><?php echo $row['jour_event']; ?></li>
-				<li><?php echo $row['lieu']; ?></li>
-				<li><?php echo $row['places_necessaires']; ?></li>
-			</ul> 
-		
-			<?php
-		}
-
+			
+	foreach ($result as $row) { ?>
+		<ul>
+			<li><?php echo $row['jour_event']; ?></li>
+			<li><?php echo $row['lieu']; ?></li>
+			<li><?php echo $row['places_necessaires']; ?></li>
+		</ul>			
+	<?php
+	}
 }
 ?>
 <?php
-
-
-function reponse() {
-	global $db, $errors; 
-
-
-	$name = $_SESSION['id'];
-	var_dump($name);
-	$dateE = $_POST['jour_event'];
-	var_dump($dateE);
-	$placeReservees = $_POST['places_reservees'];
-	var_dump($placeReservees);
-
-
-	if(isset($_POST['reponseOui']) && isset($_POST['reponseNon'])) {
-		array_push($errors, "One answer is required");
-	  }
-
-	  if(count($errors) == 0) { 
-		  
-		if(!empty($_POST['reponseOui'])) {
-		$sqlOui = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name',	true, '$placeReservees')";
-		$sthOui = $db->prepare($sqlOui);
-		$sthOui->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
-		$sthOui->bindParam(':id_user', $name, PDO::PARAM_STR);
-		$sthOui->bindValue(':reponse', true, PDO::PARAM_BOOL);
-		$sthOui->bindParam(':places_reservees', $placeReservees, PDO::PARAM_INT);
-		$sthOui->execute();
-
-		if (empty($dateE)) {
-			array_push($errors, "Date is required");
-		}
-		if (empty($placeReservees)) {
-			array_push($errors, "Number is required");
-		}
-	  }
-	  
-	  else if (!empty($_POST['reponseNon'])) {
-		$placesNon = 0; 
-
-		$sqlNon = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name', false, '$placesNon')";
-		$sthNon = $db->prepare($sqlNon);
-		$sthNon->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
-		$sthNon->bindParam(':id_user', $name, PDO::PARAM_STR);
-		$sthNon->bindValue(':reponse', false, PDO::PARAM_BOOL);
-		$sthNon->bindParam(':places_reservees', $placesNon, PDO::PARAM_INT);
-		$sthNon->execute();
-
-		if (empty($dateE)) {
-			array_push($errors, "Date is required");
-		}
-	  } 
-	}
-	
-
-	// $placesReservees = $_POST['places_reservees'];
-}
-
 // var_dump($placesReponses);
 	// $planning = "SELECT planning";
 

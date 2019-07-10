@@ -69,19 +69,19 @@ include('functions.php');
         <input type='checkbox' id='non' name='reponseNon' value='non'>
         <label for="reponseNon">Non</label>
         <select name="jour_event" id="jour_event">
-            <option value=""></option>
             <?php
 
-            $sql = "SELECT jour_event FROM planning LIMIT 4";
+            $sql = "SELECT jour_event, lieu FROM planning LIMIT 4";
             $sth = $db->prepare($sql);
             $sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
+            $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
             $sth->execute();
             $result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
             if (count($result) > 0) {
               // output data of each row
-              foreach ($result as $saison) {
-                ?><option><?php echo $saison["jour_event"] ?></option>
+              foreach ($result as $planning) {
+                ?><option><?php echo $planning["jour_event"];?></option>
               <?php
               }
             }
@@ -95,6 +95,8 @@ include('functions.php');
         </div>
         <button type="submit" class="btn" name="reponse_btn">reponse</button>
         <?php echo display_error(); ?>
+        <?php echo display_validation(); ?>
+
     </form>
 
     <?php

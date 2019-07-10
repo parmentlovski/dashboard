@@ -21,6 +21,8 @@
 	<form method="post" action="create_season.php">
 
 		<?php echo display_error(); ?>
+		
+
 
 		<div class="input-group">
 			<label>Date saison :</label>

@@ -62,13 +62,14 @@ form, .content {
 	color: #a94442; 
 	background: #f2dede; 
 	border-radius: 5px; 
-	text-align: left;
+	text-align: center;
 }
 .success {
 	color: #3c763d; 
 	background: #dff0d8; 
 	border: 1px solid #3c763d;
 	margin-bottom: 20px;
+	text-align: center;
 }
 .profile_info img {
 	display: inline-block; 
@@ -106,6 +107,12 @@ form, .content {
 .notification_info {
 	.dn {
 		display: none;
+	}
+	.success {
+		color: #3c763d; 
+		background: #dff0d8; 
+		border: 1px solid #3c763d;
+		margin-bottom: 20px;
 	}
 }
 
