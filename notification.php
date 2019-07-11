@@ -69,7 +69,7 @@ include('functions.php');
         <input type='checkbox' id='non' name='reponseNon' value='non'>
         <label for="reponseNon">Non</label>
         <label for="jour_event">Date de l'évènement</label>
-        <select name="jour_event" id="jour_event">
+        <select name="jour_event" id="jour_event" class="jour_event">
             <?php
 
             $sql = "SELECT jour_event, lieu FROM planning LIMIT 4";
@@ -82,12 +82,7 @@ include('functions.php');
               global $placesDispo;
               // output data of each row
               foreach ($result as $planning) {
-                // ?><option><?php echo $planning["jour_event"];?></option>
-                   <?php foreach($placesDispo as $row) {
-                // ?><option><?php echo $row[$placesDispo];?></option>
-                     
-                    <?php 
-                   }
+                // ?><option><?php echo $planning["jour_event"];?></option><?php
               }
             }
             ?>
@@ -95,7 +90,7 @@ include('functions.php');
 
         <div id="block-reponse" class="dn">
           <label for='places_reservees'>Combien de personnes ?</label>
-          <input type='number' id='places_reservees' name='places_reservees' min="0" max="<?php global $placesDispo; echo $placesDispo ;?>">
+          <input class="test" type='number' id='places_reservees' name='places_reservees' min="0" max="">
         </div>
         <button type="submit" class="btn" name="reponse_btn">reponse</button>
         <?php echo display_error(); ?>
@@ -104,12 +99,36 @@ include('functions.php');
         
 
         <?php
-          $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, response_parent.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM response_parent LEFT JOIN planning ON response_parent.jour_event = planning.jour_event GROUP BY response_parent.jour_event ";
+          $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, planning.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY planning.jour_event ";
           $sthC = $db->prepare($sqlC);
           $sthC->execute();
           $countPlaces = $sthC->fetchAll(PDO::FETCH_ASSOC);
+          // $countPlacesArray = $scountPlaces[0]['place_disponibles'];
         ?>
-        <script> var tableau_date = <?php echo json_encode($countPlaces) ?>; </script>
+        <script> var tableau_date = <?php echo json_encode($countPlaces) ?>; 
+        // console.log(tableau_date[i]['place_disponible']);
+
+        date = document.querySelector('.jour_event');
+        date.addEventListener('change', function(e) {
+          for (var i = 0; i < tableau_date.length; i++) {
+            console.log(i);
+             if(tableau_date[i]['jour_event'] == date.value){
+              place_disponible = tableau_date[i]['place_disponible'];
+              if(place_disponible === null){
+                place_disponible = tableau_date[i]['places_necessaires'];
+              }
+              else if(place_disponible < 0){
+                place_disponible = 0;
+              } 
+
+                input = document.querySelector('.test');
+                input.setAttribute('max',place_disponible);
+               break;
+             }
+          }
+        });
+
+        </script>
 
     </form>
 
