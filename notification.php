@@ -72,7 +72,7 @@ include('functions.php');
         <select name="jour_event" id="jour_event" class="jour_event">
             <?php
 
-            $sql = "SELECT jour_event, lieu FROM planning LIMIT 4";
+            $sql = "SELECT jour_event, lieu FROM planning LIMIT 20";
             $sth = $db->prepare($sql);
             $sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
             $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
@@ -103,6 +103,7 @@ include('functions.php');
           $sthC = $db->prepare($sqlC);
           $sthC->execute();
           $countPlaces = $sthC->fetchAll(PDO::FETCH_ASSOC);
+          // var_dump($countPlaces);
           // $countPlacesArray = $scountPlaces[0]['place_disponibles'];
         ?>
         <script> var tableau_date = <?php echo json_encode($countPlaces) ?>; 

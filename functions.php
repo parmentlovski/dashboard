@@ -400,30 +400,3 @@ function showNotif()
 	}
 }
 ?>
-<?php
-// var_dump($placesReponses);
-	// $planning = "SELECT planning";
-
-	// $sql = "SELECT places_necessaires FROM planning";
-	// $sth = $db->prepare($sql);
-	// $sth->execute();
-	// $placesNecessaires = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// $placesNecessairesArray = $placesNecessaires[0]['places_necessaires'];
-	// var_dump($placesNecessairesArray);
-	
-	// $sqlJ = "SELECT jour_event FROM planning";
-	// $sthJ = $db->prepare($sqlJ);
-	// $sthJ->execute();
-	// $dates = $sthJ->fetchAll(PDO::FETCH_ASSOC);
-	// // var_dump($dates);
-	// $datesArray = $dates[0]['jour_event'];
-	// // var_dump($datesArray);
-	// // var_dump($dates);
-
-	// $sql = "SELECT places_reservees FROM planning";
-	// $sth = $db->prepare($sql);
-	// $sth->execute();
-	// $placesReserveesInit = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// // var_dump($dates);
-	// $placesReserveesArray = $placesReserveesInit[0]['places_reservees'];
-	// var_dump($placesReserveesArray); 
