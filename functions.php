@@ -28,6 +28,10 @@ if (isset($_POST['reponse_btn'])) {
 	reponse();
 }
 
+if (isset($_POST['login_btn'])) {
+	login();
+}
+
 // REGISTER USER
 function register()
 {
@@ -236,57 +240,52 @@ if (isset($_POST['login_btn'])) {
 // LOGIN USER
 function login()
 {
-	global $db, $username, $errors;
+global $db, $username, $errors;
 
-	// grap form values
-	$username = $_POST['username'];
-	$password = $_POST['password'];
+// grap form values
+$username = $_POST['username'];
+$password = $_POST['password'];
 
-	// make sure form is filled properly
-	if (empty($username)) {
-		array_push($errors, "Username is required");
-	}
-	if (empty($password)) {
-		array_push($errors, "Password is required");
-	}
-
-	// attempt login if no errors on form
-	if (count($errors) == 0) {
-
-		$password = md5($password);
-
-		$sql = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
-		$sth = $db->prepare($sql);
-		// $sth->bindParam(':username', $username, PDO::PARAM_STR);
-		// $sth->bindParam(':password', $password, PDO::PARAM_STR);
-		$sth->execute();
-		$results = $db->query($sql);
-
-
-		// $query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
-		// $result = $db->query($sql);
-
-		if (count($results) == 1) { // user found
-			// check if user is admin or user
-			$logged_in_user = $results->fetch(PDO::FETCH_ASSOC);
-			$_SESSION['id'] = $logged_in_user['id'];
-
-			if ($logged_in_user['user_type'] == 'admin') {
-
-				$_SESSION['user'] = $logged_in_user;
-				$_SESSION['success']  = "You are now logged in";
-				header('location: admin/home.php');
-			} else {
-				$_SESSION['user'] = $logged_in_user;
-				$_SESSION['success']  = "You are now logged in";
-
-				header('location: index.php');
-			}
-		} else {
-			array_push($errors, "Wrong username/password combination");
-		}
-	}
+// make sure form is filled properly
+if (empty($username)) {
+array_push($errors, "Username is required");
 }
+if (empty($password)) {
+array_push($errors, "Password is required");
+}
+
+// attempt login if no errors on form
+if (count($errors) == 0) {
+$password = md5($password);
+
+$sql = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
+$sth = $db->prepare($sql);
+$sth->execute();
+// $results = $db->query($sql);
+
+// $query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
+// $result = $db->query($query);
+
+if ($sth->rowCount() == 1) { // user found
+// check if user is admin or user
+$logged_in_user = $sth->fetch(PDO::FETCH_ASSOC);
+
+if ($logged_in_user['user_type'] == 'admin') {
+
+$_SESSION['user'] = $logged_in_user;
+$_SESSION['success'] = "You are now logged in";
+header('location: admin/home.php');
+} else {
+$_SESSION['user'] = $logged_in_user;
+$_SESSION['success'] = "You are now logged in";
+
+header('location: index.php');
+}
+} else {
+array_push($errors, "Wrong username/password combination");
+}
+}
+} 
 
 function isAdmin()
 {
@@ -299,9 +298,9 @@ function isAdmin()
 
 function reponse()
 {
-	global $db, $errors, $validations;
+	global $db, $errors, $validations, $placesDispo;
 
-	$name = $_SESSION['id'];
+	$name = $_SESSION['user']['id'];
 	// var_dump($name);
 	$dateE = $_POST['jour_event'];
 	// var_dump($dateE);
@@ -336,25 +335,24 @@ function reponse()
 			$sthRp->execute();
 			$placesReservees = $sthRp->fetchAll(PDO::FETCH_ASSOC);
 			$placesReserveesArray = $placesReservees[0]['places_reservees'];
-			var_dump($placesReserveesArray);
+			// echo($placesReserveesArray);
 
 			$sql = "SELECT places_necessaires FROM planning WHERE jour_event='$dateE' ";
 			$sth = $db->prepare($sql);
 			$sth->execute();
 			$placesNecessaires = $sth->fetchAll(PDO::FETCH_ASSOC);
 			$placesNecessairesArray = $placesNecessaires[0]['places_necessaires'];
-			var_dump($placesNecessairesArray);
-			var_dump($placeReservees);
+			echo($placesNecessairesArray);
 
-			$sqlC = "SELECT SUM(places_reservees) FROM response_parent WHERE jour_event='$dateE'";
+			$sqlC = "SELECT SUM(places_reservees) as total FROM response_parent WHERE jour_event='$dateE'";
 			$sthC = $db->prepare($sqlC);
 			$sthC->execute();
 			$countPlaces = $sthC->fetchAll(PDO::FETCH_ASSOC);
-			var_dump($countPlaces);
-			$countArray = $countPlaces[0]["SUM(places_reservees)"];
-			var_dump($countArray);
+			// echo($countPlaces);
+			$countArray = $countPlaces[0]["total"];
+			// echo($countArray);
 
-			if ($countArray >= $placesNecessairesArray) {
+			if ($countArray > $placesNecessairesArray) {
 				array_push($errors, "Le nombre de places nécessaires est atteinte");
 			}
 			if ($countArray < $placesNecessairesArray) {
@@ -402,30 +400,3 @@ function showNotif()
 	}
 }
 ?>
-<?php
-// var_dump($placesReponses);
-	// $planning = "SELECT planning";
-
-	// $sql = "SELECT places_necessaires FROM planning";
-	// $sth = $db->prepare($sql);
-	// $sth->execute();
-	// $placesNecessaires = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// $placesNecessairesArray = $placesNecessaires[0]['places_necessaires'];
-	// var_dump($placesNecessairesArray);
-	
-	// $sqlJ = "SELECT jour_event FROM planning";
-	// $sthJ = $db->prepare($sqlJ);
-	// $sthJ->execute();
-	// $dates = $sthJ->fetchAll(PDO::FETCH_ASSOC);
-	// // var_dump($dates);
-	// $datesArray = $dates[0]['jour_event'];
-	// // var_dump($datesArray);
-	// // var_dump($dates);
-
-	// $sql = "SELECT places_reservees FROM planning";
-	// $sth = $db->prepare($sql);
-	// $sth->execute();
-	// $placesReserveesInit = $sth->fetchAll(PDO::FETCH_ASSOC);
-	// // var_dump($dates);
-	// $placesReserveesArray = $placesReserveesInit[0]['places_reservees'];
-	// var_dump($placesReserveesArray); 

@@ -68,38 +68,73 @@ include('functions.php');
         <label for="reponseOui">Oui</label>
         <input type='checkbox' id='non' name='reponseNon' value='non'>
         <label for="reponseNon">Non</label>
-        <select name="jour_event" id="jour_event">
+        <label for="jour_event">Date de l'évènement</label>
+        <select name="jour_event" id="jour_event" class="jour_event">
             <?php
 
-            $sql = "SELECT jour_event, lieu FROM planning LIMIT 4";
+            $sql = "SELECT jour_event, lieu FROM planning LIMIT 20";
             $sth = $db->prepare($sql);
             $sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
             $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
             $sth->execute();
             $result = $sth->fetchAll(PDO::FETCH_ASSOC);
-
             if (count($result) > 0) {
+              global $placesDispo;
               // output data of each row
               foreach ($result as $planning) {
-                ?><option><?php echo $planning["jour_event"];?></option>
-              <?php
+                // ?><option><?php echo $planning["jour_event"];?></option><?php
               }
             }
             ?>
           </select>
 
         <div id="block-reponse" class="dn">
-          <input type='number' id='places_reservees' name='places_reservees'>
           <label for='places_reservees'>Combien de personnes ?</label>
-          
+          <input class="test" type='number' id='places_reservees' name='places_reservees' min="0" max="">
         </div>
         <button type="submit" class="btn" name="reponse_btn">reponse</button>
         <?php echo display_error(); ?>
         <?php echo display_validation(); ?>
+        
+        
+
+        <?php
+          $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, planning.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY planning.jour_event ";
+          $sthC = $db->prepare($sqlC);
+          $sthC->execute();
+          $countPlaces = $sthC->fetchAll(PDO::FETCH_ASSOC);
+          // var_dump($countPlaces);
+          // $countPlacesArray = $scountPlaces[0]['place_disponibles'];
+        ?>
+        <script> var tableau_date = <?php echo json_encode($countPlaces) ?>; 
+        // console.log(tableau_date[i]['place_disponible']);
+
+        date = document.querySelector('.jour_event');
+        date.addEventListener('change', function(e) {
+          for (var i = 0; i < tableau_date.length; i++) {
+            console.log(i);
+             if(tableau_date[i]['jour_event'] == date.value){
+              place_disponible = tableau_date[i]['place_disponible'];
+              if(place_disponible === null){
+                place_disponible = tableau_date[i]['places_necessaires'];
+              }
+              else if(place_disponible < 0){
+                place_disponible = 0;
+              } 
+
+                input = document.querySelector('.test');
+                input.setAttribute('max',place_disponible);
+               break;
+             }
+          }
+        });
+
+        </script>
 
     </form>
 
     <?php
+            print_r($result);
 
     showNotif();; ?>
 
