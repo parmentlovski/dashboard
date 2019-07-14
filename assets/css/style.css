@@ -8,7 +8,6 @@
 body,
 html {
   height: 100%;
-  font-family: Ubuntu-Regular, sans-serif;
 }
 
 #index {
@@ -21,7 +20,8 @@ html {
 
 .header {
   width: 40%;
-  margin: 50px auto 0px;
+  margin-top: 150px;
+  margin-left: 40%;
   color: white;
   background: #5F9EA0;
   text-align: center;
@@ -29,6 +29,16 @@ html {
   border-bottom: none;
   border-radius: 10px 10px 0px 0px;
   padding: 20px;
+}
+
+.form-create {
+  width: 40%;
+  margin-top: 0;
+  margin-left: 40%;
+  padding: 20px;
+  border: 1px solid #B0C4DE;
+  background: white;
+  border-radius: 0px 0px 10px 10px;
 }
 
 .input-group {
@@ -169,10 +179,34 @@ html {
 
 .top-dashboard h2 a {
   text-align: center;
-  font-family: 'Graduate', cursive;
+  font-family: 'Graduate', serif;
   font-size: 30px;
   text-transform: uppercase;
   color: white;
+}
+
+.top-dashboard .positionnement-notif {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.top-dashboard .positionnement-notif p a i {
+  font-size: 30px;
+}
+
+.top-dashboard .positionnement-notif p:first-child {
+  position: absolute;
+  right: 5%;
+  margin-top: 7px;
+}
+
+.top-dashboard .positionnement-notif p:last-child {
+  position: absolute;
+  right: 2%;
 }
 
 .top-dashboard p {

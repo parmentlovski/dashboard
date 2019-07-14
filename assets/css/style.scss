@@ -7,7 +7,8 @@
 body,
 html {
 	height: 100%;
-	font-family: Ubuntu-Regular, sans-serif;
+	// font-family: Ubuntu-Regular, sans-serif;
+	// font-family: 'Graduate', serif;
 }
 
 #index {
@@ -23,7 +24,8 @@ html {
 
 .header {
 	width: 40%;
-	margin: 50px auto 0px;
+	margin-top: 150px;
+	margin-left: 40%;
 	color: white;
 	background: #5F9EA0;
 	text-align: center;
@@ -33,16 +35,15 @@ html {
 	padding: 20px;
 }
 
-// form,
-// .content {
-
-// 	// width: 40%;
-// 	// margin: 0px auto;
-// 	// padding: 20px;
-// 	// border: 1px solid #B0C4DE;
-// 	// background: white;
-// 	// border-radius: 0px 0px 10px 10px;
-// }
+.form-create {
+	width: 40%;
+	margin-top: 0;
+	margin-left: 40%;
+	padding: 20px;
+	border: 1px solid #B0C4DE;
+	background: white;
+	border-radius: 0px 0px 10px 10px;
+}
 
 .input-group {
 	margin: 10px 0px 10px 0px;
@@ -175,15 +176,37 @@ html {
 		margin-top: 10px;
 		font-size: 22px;
 		text-transform: uppercase;
-		
-		
 
 		a { // répétition selon choix 
 			text-align: center;
-			font-family: 'Graduate', cursive;
+			font-family: 'Graduate', serif;
 			font-size: 30px;
 			text-transform: uppercase;
 			color: white;
+		}
+	}
+
+	.positionnement-notif {
+		display: flex;
+		align-items: center;
+
+		p {
+			a {
+				i {
+					font-size: 30px;
+				}
+			}
+		}
+
+		p:first-child {
+			position: absolute;
+			right: 5%;
+			margin-top: 7px;
+		}
+
+		p:last-child {
+			position: absolute;
+			right: 2%;
 		}
 	}
 
