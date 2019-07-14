@@ -149,6 +149,114 @@ html {
 	}
 }
 
+// ADMIN 
+
+.top-dashboard {
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 90px;
+	background-color: #2D353D;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+
+	img {
+		position: absolute;
+		left: 8%;
+		height: 60px;
+		width: 60px;
+	}
+
+	h2 {
+		margin-top: 10px;
+		font-size: 22px;
+		text-transform: uppercase;
+		
+		
+
+		a { // répétition selon choix 
+			text-align: center;
+			font-family: 'Graduate', cursive;
+			font-size: 30px;
+			text-transform: uppercase;
+			color: white;
+		}
+	}
+
+	p {
+		position: absolute;
+		right: 2%;
+		a {
+			i {
+				font-size: 30px;
+			}
+		}
+	}
+
+}
+
+.nav-dashboard {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 22%;
+	// background-color: #00a379;
+	// background-color: #4a5b6f;
+	background-color: #47535E;
+	background-color: #596167;
+	color: white;
+
+	ul {
+		margin-top: 150px;
+		margin-left: 10%;
+
+
+		li {
+			text-align: left;
+			font-size: 30px;
+
+			i {
+				font-size: 18px;
+			}
+
+			a {
+				color: white;
+				text-decoration: none;
+				font-size: 22px;
+			}
+		}
+
+		li:nth-child(2),
+		li:nth-child(3),
+		li:nth-child(4),
+		li:last-child {
+			margin-top: 60px;
+		}
+	}
+}
+
+.graphique {
+	h1 {
+		color: #44000d; //#343C49
+		text-align: center;
+		font-size: 35px;
+		margin-left: 21%;
+		margin-top: 130px;
+	}
+
+	.container {
+		.row {
+			canvas {
+				margin-top: 80px;
+			}
+		}
+	}
+}
 
 
 
@@ -260,35 +368,35 @@ textarea:focus:-ms-input-placeholder {
 }
 
 input::-webkit-input-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 input:-moz-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 input::-moz-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 input:-ms-input-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 textarea::-webkit-input-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 textarea:-moz-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 textarea::-moz-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 textarea:-ms-input-placeholder {
-	color: #FFDFCB;
+	color: white;
 }
 
 label {
@@ -361,7 +469,7 @@ iframe {
 	top: 0;
 	left: 0;
 	background-color: rgb(0, 0, 0);
-	opacity: 0.55; 
+	opacity: 0.55;
 }
 
 .wrap-login100 {
@@ -407,7 +515,7 @@ iframe {
 	font-family: 'Ubuntu', sans-serif;
 	font-weight: bold;
 	font-size: 28px;
-	color: #FFDFCB;
+	color: white;
 	line-height: 1.2;
 	text-align: center;
 	text-transform: uppercase;
@@ -431,7 +539,7 @@ iframe {
 	font-family: 'Ubuntu', sans-serif;
 	font-weight: normal;
 	font-size: 20px;
-	color: #FFDFCB;
+	color: white;
 	line-height: 1.2;
 	opacity: 1;
 	display: block;
@@ -470,7 +578,7 @@ iframe {
 	-moz-transition: all 0.4s;
 	transition: all 0.4s;
 
-	background:#7b3b14;
+	background: #7b3b14;
 	background: -webkit-linear-gradient(left, #A56136, #7b3b14, #542001);
 	background: -o-linear-gradient(left, #A56136, #7b3b14, #542001);
 	background: -moz-linear-gradient(left, #A56136, #7b3b14, #542001);
@@ -480,7 +588,7 @@ iframe {
 .focus-input100::after {
 	font-family: Linearicons-Free;
 	font-size: 18px;
-	color: #FFDFCB;
+	color: white;
 
 	content: attr(data-placeholder);
 	display: block;
@@ -540,7 +648,7 @@ iframe {
 	font-family: 'Ubuntu', sans-serif;
 	font-weight: bold;
 	font-size: 18px;
-	color: #FFDFCB;
+	color: white;
 	line-height: 1.2;
 	text-transform: uppercase;
 
@@ -624,7 +732,7 @@ iframe {
 	pointer-events: none;
 
 	font-family: 'Ubuntu', sans-serif;
-  	font-weight: normal;
+	font-weight: normal;
 	color: #c80000;
 	font-size: 13px;
 	line-height: 1.4;

@@ -14,8 +14,10 @@
 	</style>
 </head>
 <body>
+
+<?php include('../nav.php') ?>
 	<div class="header">
-		<h2>Admin - create user</h2>
+		<h2>Create user</h2>
 	</div>
 	
 	<form method="post" action="create_season.php">

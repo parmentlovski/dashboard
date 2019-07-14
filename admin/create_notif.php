@@ -14,8 +14,12 @@
 	</style>
 </head>
 <body>
+
+
+<?php include('../nav.php') ?>
+
 	<div class="header">
-		<h2>Admin - create notification</h2>
+		<h2>Create notification</h2>
 	</div>
 	
 	<form method="post" action="create_notif.php">
