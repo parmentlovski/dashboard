@@ -8,7 +8,7 @@
                 </i>
             </a>
         </p>
-        <p><a href="home.php?logout='1'">
+        <p><a href="index.php?logout='1'">
                 <i class="fas fa-sign-out-alt"></i>
             </a></p>
         <p>
