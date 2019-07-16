@@ -26,7 +26,7 @@
 <body>
 
 
-<?php include('../nav.php') ?>
+<?php //include('../nav.php') ?>
 
 	<div class="header">
 		<h2>Create notification</h2>

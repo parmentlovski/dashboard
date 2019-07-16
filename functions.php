@@ -12,8 +12,8 @@ $errors   = array(); // déclaration d'erreurs
 $validations = array(); // déclaration success
 
 // call the register() function if register_btn is clicked 
-if (isset($_POST['register_btn'])) { 
-	register(); 
+if (isset($_POST['register_btn'])) {
+	register();
 }
 
 if (isset($_POST['season_btn'])) {
@@ -72,7 +72,7 @@ function register()
 		array_push($errors, "The two passwords do not match");
 	}
 
-	if (count($result_u) > 0) { 
+	if (count($result_u) > 0) {
 		array_push($errors, "Sorry... username already taken");
 	} else if (count($result_e) > 0) {
 		array_push($errors, "Sorry... email already taken");
@@ -84,7 +84,7 @@ function register()
 			$sql = "INSERT INTO users (username, email, user_type, password) 
 					  VALUES(:username, :email, :user_type, :password)";
 			$sth = $db->prepare($sql);
-			$sth->bindParam(':username', $username, PDO::PARAM_STR); 
+			$sth->bindParam(':username', $username, PDO::PARAM_STR);
 			$sth->bindParam(':email', $email, PDO::PARAM_STR);
 			$sth->bindParam(':user_type', $user_type, PDO::PARAM_STR);
 			$sth->bindParam(':password', $password, PDO::PARAM_STR);
@@ -130,7 +130,7 @@ function register()
 // 	return $user;
 // }
 
-function createSeason() 
+function createSeason()
 {
 
 	global $db, $errors, $season;
@@ -155,7 +155,7 @@ function createSeason()
 function createNotif()
 {
 	// ajout de la date de l'evenement
-	global $db, $errors, $users;
+	global $db, $errors, $users, $username, $email;
 	$dateEvent = $_POST['date_event'];
 	$lieuMatch = $_POST['lieu_event'];
 	$dispoEvent = $_POST['dispo_event'];
@@ -186,6 +186,35 @@ function createNotif()
 	$sth->bindParam(':id_user', $_SESSION['id'], PDO::PARAM_INT);
 	$sth->execute();
 	var_dump($_POST["date_event"]);
+
+
+	$EmailTo = "bryan-d76c64@inbox.mailtrap.io";
+	$Subject = "Vous avez reçu un message";
+	$message = "Bonjour, êtes-vous disponibles pour le prochain match ?";
+	$mail = "bnc@admin.fr";
+
+	// prepare email body text
+	$Body = "";
+	$Body .= "Nom: ";
+	$Body .= $username;
+	$Body .= "\n";
+	$Body .= "Mail: ";
+	$Body .= $email;
+	$Body .= "\n";
+	$Body .= "Message: ";
+	$Body .= $message;
+	$Body .= "\n";
+
+	// send email
+	$send = mail($EmailTo, $Subject, $Body, "From:" . $mail);
+
+	var_dump($send);
+	// redirect to success page
+	if ($send ="") {
+		echo "success";
+	} else {
+		echo "Quelque chose ne va pas";
+	}
 }
 
 function isLoggedIn()
@@ -212,48 +241,48 @@ if (isset($_POST['login_btn'])) {
 // LOGIN USER
 function login()
 {
-global $db, $username, $errors;
+	global $db, $username, $errors;
 
-// grap form values
-$username = $_POST['username'];
-$password = $_POST['password'];
+	// grap form values
+	$username = $_POST['username'];
+	$password = $_POST['password'];
 
-// make sure form is filled properly
-if (empty($username)) {
-array_push($errors, "Username is required");
+	// make sure form is filled properly
+	if (empty($username)) {
+		array_push($errors, "Username is required");
+	}
+	if (empty($password)) {
+		array_push($errors, "Password is required");
+	}
+
+	// attempt login if no errors on form
+	if (count($errors) == 0) {
+		$password = md5($password);
+
+		$sql = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
+		$sth = $db->prepare($sql);
+		$sth->execute();
+
+		if ($sth->rowCount() == 1) { // user found
+			// check if user is admin or user
+			$logged_in_user = $sth->fetch(PDO::FETCH_ASSOC);
+
+			if ($logged_in_user['user_type'] == 'admin') {
+
+				$_SESSION['user'] = $logged_in_user;
+				$_SESSION['success'] = "You are now logged in";
+				header('location: admin/home.php');
+			} else {
+				$_SESSION['user'] = $logged_in_user;
+				$_SESSION['success'] = "You are now logged in";
+
+				header('location: index.php');
+			}
+		} else {
+			array_push($errors, "Wrong username/password combination");
+		}
+	}
 }
-if (empty($password)) {
-array_push($errors, "Password is required");
-}
-
-// attempt login if no errors on form
-if (count($errors) == 0) {
-$password = md5($password);
-
-$sql = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
-$sth = $db->prepare($sql);
-$sth->execute();
-
-if ($sth->rowCount() == 1) { // user found
-// check if user is admin or user
-$logged_in_user = $sth->fetch(PDO::FETCH_ASSOC);
-
-if ($logged_in_user['user_type'] == 'admin') {
-
-$_SESSION['user'] = $logged_in_user;
-$_SESSION['success'] = "You are now logged in";
-header('location: admin/home.php');
-} else {
-$_SESSION['user'] = $logged_in_user;
-$_SESSION['success'] = "You are now logged in";
-
-header('location: index.php');
-}
-} else {
-array_push($errors, "Wrong username/password combination");
-}
-}
-} 
 
 function isAdmin()
 {
@@ -310,7 +339,7 @@ function reponse()
 			$sth->execute();
 			$placesNecessaires = $sth->fetchAll(PDO::FETCH_ASSOC);
 			$placesNecessairesArray = $placesNecessaires[0]['places_necessaires'];
-			echo($placesNecessairesArray);
+			echo ($placesNecessairesArray);
 
 			$sqlC = "SELECT SUM(places_reservees) as total FROM response_parent WHERE jour_event='$dateE'";
 			$sthC = $db->prepare($sqlC);
@@ -348,7 +377,7 @@ function reponse()
 
 function showNotif()
 {
-	global $db, $dateEvent, $lieuMatch, $dispoEvent ;
+	global $db, $dateEvent, $lieuMatch, $dispoEvent;
 
 	$sql = "SELECT * FROM planning ";
 	$sth = $db->prepare($sql);
@@ -357,13 +386,13 @@ function showNotif()
 	$sth->bindParam(':places_necessaires', $dispoEvent, PDO::PARAM_STR);
 	$sth->execute();
 	$result = $sth->fetchAll(PDO::FETCH_ASSOC);
-			
+
 	foreach ($result as $row) { ?>
 		<ul>
 			<li><?php echo $row['jour_event']; ?></li>
 			<li><?php echo $row['lieu']; ?></li>
 			<li><?php echo $row['places_necessaires']; ?></li>
-		</ul>			
+		</ul>
 	<?php
 	}
 }

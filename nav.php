@@ -16,9 +16,9 @@
 						<i style="color: #888;">(<?php echo ucfirst($_SESSION['user']['user_type']); ?>)</i>
                     </li>
 					<li><a href="graph.php">Statistics</a></li>
-					<li><a href="create_season.php"> + Add season</a></li>
-					<li><a href="create_user.php"> + Add user</a></li>
+					<li><a href="create_user.php"> + Add user</a></li>					
 					<li><a href="create_notif.php"> + Add notif</a></li>
+					<li><a href="create_season.php"> + Add season</a></li>
 				</ul>
 			<?php endif ?>
 		</nav>
