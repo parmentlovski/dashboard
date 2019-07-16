@@ -34,271 +34,167 @@ if (isset($_GET['logout'])) {
 		<h1>Les statistiques du club</h1>
 		<div class="container">
 			<div class="row">
-			<canvas id="myChart" class="offset-3 col-9"> </canvas>
+            <?php $sql_sco = "SELECT SUM(places_reservees) AS places_reservees, planning.jour_event, places_necessaires FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY response_parent.jour_event DESC LIMIT 4";
+        $sth_sco = $db->prepare($sql_sco);
+        $sth_sco->execute();
+        $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
+        $result_reverse = array_reverse($result_sco);
+        var_dump($result_reverse[0]['jour_event']);
+        var_dump($result_reverse[1]['jour_event']);
+        var_dump($result_reverse[2]['jour_event']);
+        var_dump($result_reverse[3]['jour_event']);
 
-<?php
-
-$sql_graph = "SELECT places_necessaires FROM planning WHERE places_necessaires";
-$sth_graph = $db->prepare($sql_graph);
-$sth_graph->execute();
-$result_graph = $sth_graph->fetchAll(PDO::FETCH_ASSOC);
-
-for ($i1 = 0; $i1 < sizeof($result_graph); $i1++) {
-    $graph = 0;
-
-    $graph += $result_graph[$i1]["places_necessaires"];
-    echo ($result_graph[$i1]['places_necessaires'] . ',');
-}
-
-// function pourcent()
-// {
-
-//     global $db, $date_event, $result_sco;
-
-//     $sql_sco = "SELECT `jour_event`, SUM(`places_reservees`) FROM response_parent GROUP BY `jour_event`";
-//     $sth_sco = $db->prepare($sql_sco);
-//     $sth_sco->bindParam(':jour_event', $date_event, PDO::PARAM_STR);
-//     $sth_sco->execute();
-//     $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
+        echo $result_reverse[0]['jour_event'];
 
 
-//     $sql1 = "SELECT places_necessaires FROM planning";
-//     $sthpN = $db->prepare($sql1);
-//     $sthpN->execute();
-//     $placeLimite = $sthpN->fetch(PDO::FETCH_ASSOC);
+        ?>
 
-//     for ($i = 0; $i < sizeof($result_sco); $i++) {
+        <canvas id="canvas2"></canvas>
 
-//         //echo de mes places additionné selon les dates
-//         echo $result_sco[$i]['SUM(`places_reservees`)'].',';
+        <script>
+            var barChartData = {
+                labels: ['<?php echo $result_reverse[0]['jour_event']; ?>', '<?php echo $result_reverse[1]['jour_event']; ?>', '<?php echo $result_reverse[2]['jour_event']; ?>', '<?php echo $result_reverse[3]['jour_event']; ?>'],
+                datasets: [{
+                    label: 'Places réservées',
+                    data: [<?php addition(); ?>],
+                    backgroundColor: [
+                        'green',
+                        'green',
+                        'green',
+                        'green'
 
-
-//         //echo du calcul de pourcentage entre le nombre de places prise et le nombre de place necessaire par date
-//         echo (($result_sco[$i]['SUM(`places`)'] * 100) / $placeLimite['places_necessaires'].',');
-//     }
-
-// }
-
-
-function addition()
-{
-
-    global $db, $date_event, $result_sco;
-
-    $sql_sco = "SELECT `jour_event`, SUM(`places_reservees`) FROM response_parent GROUP BY `jour_event`";
-    $sth_sco = $db->prepare($sql_sco);
-    $sth_sco->bindParam(':jour_event', $date_event, PDO::PARAM_STR);
-    $sth_sco->execute();
-    $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
-
-
-    $sql1 = "SELECT places_necessaires FROM planning";
-    $sthpN = $db->prepare($sql1);
-    $sthpN->execute();
-    $placeLimite = $sthpN->fetch(PDO::FETCH_ASSOC);
-
-    for ($i = 0; $i < sizeof($result_sco); $i++) {
-
-        //echo de mes places additionné selon les dates
-        echo $result_sco[$i]['SUM(`places_reservees`)'] . ',';
-
-
-        //echo du calcul de pourcentage entre le nombre de places prise et le nombre de place necessaire par date
-        echo (($result_sco[$i]['SUM(`places_reservees`)'] * 100) / $placeLimite['places_necessaires'] . ',');
-    }
-}
-
-function soustract()
-{
-
-    global $db, $date_event, $i;
-    $sql_graph = "SELECT places_necessaires FROM planning WHERE places_necessaires";
-    $sth_graph = $db->prepare($sql_graph);
-    $sth_graph->execute();
-    $result_graph = $sth_graph->fetchAll(PDO::FETCH_ASSOC);
-
-    $sql_sco = "SELECT `jour_event`, SUM(`places_reservees`) FROM response_parent GROUP BY `jour_event`";
-    $sth_sco = $db->prepare($sql_sco);
-    $sth_sco->bindParam(':jour_event', $date_event, PDO::PARAM_STR);
-    $sth_sco->execute();
-    $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
-
-    for ($i1 = 0; $i1 < sizeof($result_graph); $i1++) {
-        $graph = 0;
-
-        $graph += $result_graph[$i1]["places_necessaires"];
-        echo ($result_graph[$i1]['places_necessaires'] . ',');
-    }
-
-    for ($j = 0; $j < sizeof($result_sco); $j++) {
-        echo $result_sco[$j]['SUM(`places_reservees`)'] . ',';
-        //echo de mes places additionné selon les dates
-        echo $result_sco[$j]['SUM(`places_reservees`)'] . ',';
-    }
-}
-soustract()
-
-?>
-<script>
-    var ctx = document.getElementById('myChart');
-    var myChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [<?php addition(); ?>],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)'
-
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Places disponibles',
+                    data: [<?php soustract(); ?>],
+                    fontSize: 40,
+                    defaultFontSize: 40,
+                    backgroundColor: [
+                        'red',
+                        'red',
+                        'red',
+                        'red'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
                 }]
-            }
-        }
-    });
-</script>
+            };
+            
+            window.onload = function() {
+                var ctx2 = document.getElementById('canvas2').getContext('2d');
+                window.myBar = new Chart(ctx2, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        title: {
+                            display: true,
+                            fontSize: 35,
+                            text: 'Places disponibles sur les 4 prochains évènements'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        responsive: true,
+                        scales: {
+                            xAxes: [{
+                                stacked: true,
+                                // barThickness: 6,
+                                // maxBarThickness: 8,
+                                barPercentage: 0.4,
+                                ticks: {
+                                    fontSize: 40
+                                }
 
-<canvas id="canvas" class="offset-3 col-9"></canvas>
+                            }],
+                            yAxes: [{
+                                stacked: true
+                            }],
 
-<script>
-    var barChartData = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [{
-            label: 'Places réservées',
-            data: [<?php addition(); ?>],
-            backgroundColor: [
-                'green',
-                'green',
-                'green',
-                'green',
-                'green',
-                'green',
-                'green'
+                        }
+                    }
+                });
+            };
+        </script>
 
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(255, 159, 64, 1)'
+        <?php
+        $sql_sco = "SELECT username, SUM(reponse) FROM users 
+         LEFT JOIN response_parent ON response_parent.id_user = users.id
+         WHERE reponse = 1 GROUP BY id_user ORDER BY SUM(reponse) DESC LIMIT 5";
+        $sth_sco = $db->prepare($sql_sco);
+        $sth_sco->execute();
+        $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
+        var_dump($result_sco);
+        ?>
 
-            ],
-            borderWidth: 1
-        }, {
-            label: 'Places nécessaires',
-            data: [<?php
-                    $graph = 0;
-                    for ($i = 0; $i < sizeof($result_graph); $i++) {
-                        $graph += $result_graph[$i]["places_necessaires"];
-                        echo ($result_graph[$i]['places_necessaires'] . ',');
-                    } ?>],
-            backgroundColor: [
-                'red',
-                'red',
-                'red',
-                'red',
-                'red',
-                'red',
-                'red'
+        <canvas id="myChart1"></canvas>
+        <script>
+           var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+		var color = Chart.helpers.color;
+		var horizontalBarChartData = {
+			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                datasets: [{
+                    label: 'classement',
+                    backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+                    borderColor: window.chartColors.red,
+                    borderWidth: 1,
+                    data: [
+                        randomScalingFactor(),
+                        randomScalingFactor(),
+                        randomScalingFactor(),
+                        randomScalingFactor(),
+                        randomScalingFactor()
+                    ]
+                }, {
+                    label: 'ok',
+                    backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+                    borderColor: window.chartColors.blue,
+                    data: [
+                        randomScalingFactor(),
+                        randomScalingFactor(),
+                        randomScalingFactor(),
+                        randomScalingFactor(),
+                        randomScalingFactor()
+                    ]
+                }]
+            };
 
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
+            window.onload = function() {
+                var ctx = document.getElementById('myChart1').getContext('2d');
+                window.myHorizontalBar = new Chart(ctx, {
+                    type: 'horizontalBar',
+                    data: horizontalBarChartData,
+                    options: {
+                        elements: {
+                            rectangle: {
+                                borderWidth: 2
+                            }
+                        },
+                        responsive: true,
+                        legend: {
+                            position: 'right'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Chart.js Horizontal Bar Chart'
+                        }
+                    }
+                });
+            };
+        </script>
 
-
-
-        }]
-
-    };
-    window.onload = function() {
-        var ctx = document.getElementById('canvas').getContext('2d');
-        window.myBar = new Chart(ctx, {
-            type: 'bar',
-            data: barChartData,
-            options: {
-                title: {
-                    display: true,
-                    text: 'Chart.js Bar Chart - Stacked'
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false
-                },
-                responsive: true,
-                scales: {
-                    xAxes: [{
-                        stacked: true,
-                    }],
-                    yAxes: [{
-                        stacked: true
-                    }]
-                }
-            }
-        });
-    };
-
-    document.getElementById('randomizeData').addEventListener('click', function() {
-        barChartData.datasets.forEach(function(dataset) {
-            dataset.data = dataset.data.map(function() {
-                return randomScalingFactor();
-            });
-        });
-        window.myBar.update();
-    });
-</script>
-</div>
-</div>
-
-		<!-- <canvas id="userstest" width="100" height="100"></canvas>
-		<script>
-			data = {
-				datasets: [{
-					data: [10, 20, 30]
-				}],
-
-				// These labels appear in the legend and in the tooltips when hovering different arcs
-				labels: [
-					'Red',
-					'Yellow',
-					'Blue'
-				]
-			};
-			window.onload = function() {
-				var ctx = document.getElementById('usertest').getContext('2d');
-				var myPieChart = new Chart(ctx, {
-					type: 'pie',
-					data: data,
-					options: options
-				});
-			};
-		</script> -->
 	</section>
 
 
