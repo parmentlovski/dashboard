@@ -39,6 +39,8 @@
 						</button>
 					</div>
 
+					<?php echo display_error(); ?>
+
 				</form>
 			</div>
 		</div>

@@ -28,7 +28,7 @@ addition();
 
 
         <?php
-        // include('../nav.php');
+        include('../nav.php');
         ?>
         <?php
         function addition()

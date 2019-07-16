@@ -33,7 +33,7 @@ include('functions.php');
         <select name="jour_event" id="jour_event" class="jour_event">
             <?php
 
-            $sql = "SELECT jour_event, lieu FROM planning LIMIT 20";
+            $sql = "SELECT jour_event, lieu FROM planning LIMIT 4"; // affiche les 4 prochains évènements 
             $sth = $db->prepare($sql);
             $sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
             $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
@@ -46,6 +46,9 @@ include('functions.php');
                 // ?><option><?php echo $planning["jour_event"];?></option><?php
               }
             }
+            else {
+              array_push($errors, 'Aucun évènements en cours');
+            }
             ?>
           </select>
 
@@ -56,8 +59,6 @@ include('functions.php');
         <button type="submit" class="btn" name="reponse_btn">reponse</button>
         <?php echo display_error(); ?>
         <?php echo display_validation(); ?>
-        
-        
 
         <?php
           $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, planning.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY planning.jour_event ";
@@ -70,9 +71,9 @@ include('functions.php');
         <script> var tableau_date = <?php echo json_encode($countPlaces) ?>; 
         // console.log(tableau_date[i]['place_disponible']);
 
-        date = document.querySelector('.jour_event');
-        date.addEventListener('change', function(e) {
-          for (var i = 0; i < tableau_date.length; i++) {
+        date = document.querySelector('.jour_event'); // quand on sélectionne l'option des évènements
+        date.addEventListener('change', function(e) {// et lorsque l'on change d'évènements
+          for (var i = 0; i < tableau_date.length; i++) { 
             console.log(i);
              if(tableau_date[i]['jour_event'] == date.value){
               place_disponible = tableau_date[i]['place_disponible'];
@@ -82,7 +83,6 @@ include('functions.php');
               else if(place_disponible < 0){
                 place_disponible = 0;
               } 
-
                 input = document.querySelector('.test');
                 input.setAttribute('max',place_disponible);
                break;
@@ -95,9 +95,9 @@ include('functions.php');
     </form>
 
     <?php
-            print_r($result);
+            // print_r($result);
 
-    showNotif();; ?>
+    // showNotif();; ?>
 
 
   </div>

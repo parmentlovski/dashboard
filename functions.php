@@ -8,16 +8,16 @@ $db = new PDO('mysql:host=localhost;dbname=multi_login', 'root', 'online@2017');
 $username = "";
 $email    = "";
 $season    = "";
-$errors   = array();
-$validations = array();
+$errors   = array(); // déclaration d'erreurs 
+$validations = array(); // déclaration success
 
-// call the register() function if register_btn is clicked
-if (isset($_POST['register_btn'])) {
-	register();
+// call the register() function if register_btn is clicked 
+if (isset($_POST['register_btn'])) { 
+	register(); 
 }
 
 if (isset($_POST['season_btn'])) {
-	createSeason();
+	createSeason(); // 
 }
 
 if (isset($_POST['notif_btn'])) {
@@ -46,13 +46,13 @@ function register()
 	$password_2  =  $_POST['password_2'];
 	$season = $_POST['season_user'];
 
-	$sql_u = "SELECT * FROM users WHERE username=:username";
-	$sth = $db->prepare($sql_u);
-	$sth->bindParam(':username', $username, PDO::PARAM_STR);
-	$sth->execute();
-	$result_u = $sth->fetchAll(PDO::FETCH_ASSOC);
+	$sql_u = "SELECT * FROM users WHERE username=:username"; // on selectione tout les users afin de pouvoir vérifier si il existe déja => ligne 76
+	$sth = $db->prepare($sql_u); // on prépare la requete sql 
+	$sth->bindParam(':username', $username, PDO::PARAM_STR); // est_-ce utile pour un SELECT ?
+	$sth->execute(); // on execute la requete
+	$result_u = $sth->fetchAll(PDO::FETCH_ASSOC); // on récupère tout les résultats et avec un fetchAll on les mets dans un tableau associatif
 
-	$sql_e = "SELECT * FROM users WHERE email=:email";
+	$sql_e = "SELECT * FROM users WHERE email=:email"; // on selectione tout les emails afin de pouvoir vérifier si il existe déja => ligne 78
 	$sth = $db->prepare($sql_e);
 	$sth->bindParam(':email', $email, PDO::PARAM_STR);
 	$sth->execute();
@@ -60,7 +60,7 @@ function register()
 
 	// form validation: ensure that the form is correctly filled
 	if (empty($username)) {
-		array_push($errors, "Username is required");
+		array_push($errors, "Username is required"); // array push permet de charger $error qui affiche le css + le motif de l'erreur
 	}
 	if (empty($email)) {
 		array_push($errors, "Email is required");
@@ -72,9 +72,9 @@ function register()
 		array_push($errors, "The two passwords do not match");
 	}
 
-	if (Count($result_u) > 0) {
+	if (count($result_u) > 0) { 
 		array_push($errors, "Sorry... username already taken");
-	} else if (Count($result_e) > 0) {
+	} else if (count($result_e) > 0) {
 		array_push($errors, "Sorry... email already taken");
 	} else {
 		// register user if there are no errors in the form
@@ -84,42 +84,40 @@ function register()
 			$sql = "INSERT INTO users (username, email, user_type, password) 
 					  VALUES(:username, :email, :user_type, :password)";
 			$sth = $db->prepare($sql);
-			$sth->bindParam(':username', $username, PDO::PARAM_STR);
+			$sth->bindParam(':username', $username, PDO::PARAM_STR); 
 			$sth->bindParam(':email', $email, PDO::PARAM_STR);
 			$sth->bindParam(':user_type', $user_type, PDO::PARAM_STR);
 			$sth->bindParam(':password', $password, PDO::PARAM_STR);
 			$sth->execute();
 
-			$last_id = $db->lastInsertId();
+			$last_id = $db->lastInsertId(); // récupère le dernier id enregistré ( ici on récupère le dernier id de l'insert into ligne 84 pour l'insérer dans la bdd inscription)
 
-
-			$sql_s = "SELECT * FROM saison WHERE date_saison='$season'";
+			$sql_s = "SELECT * FROM saison WHERE date_saison='$season'"; // similaire à un inner join on récupère la saison 
 			$sth_s = $db->prepare($sql_s);
 			$sth_s->bindParam(':date_saison', $season, PDO::PARAM_STR);
 			$sth_s->execute();
 			$result = $sth_s->fetchAll();
 			$idSeason = $result[0]["id_saison"];
-			echo $idSeason;
-			echo $last_id;
+			// echo $idSeason;
+			// echo $last_id;
 
-			$sql = "INSERT INTO inscription (user_identifiant, saison_id) 
-					  VALUES(:user_identifiant, :saison_id)";
+			$sql = "INSERT INTO inscription (user_identifiant, saison_id)  
+					  VALUES(:user_identifiant, :saison_id)"; // pour l'injecter ici 
 			$sth = $db->prepare($sql);
 			$sth->bindParam(':user_identifiant', $last_id, PDO::PARAM_INT);
 			$sth->bindParam(':saison_id', $idSeason, PDO::PARAM_STR);
 			$sth->execute();
 
-
 			$_SESSION['success']  = "New user successfully created!!";
-			header('Location: home.php');
+			header('Location: home.php'); // redirection vers la page home.php
 		}
 	}
 }
 
-$sqlUp = "UPDATE users SET username=test3 WHERE id=4";
-$sthUp = $db->prepare($sqlUp);
-$sthUp->bindParam(':username', $username, PDO::PARAM_STR);
-$sthUp->execute();
+// $sqlUp = "UPDATE users SET username=test3 WHERE id=4";
+// $sthUp = $db->prepare($sqlUp);
+// $sthUp->bindParam(':username', $username, PDO::PARAM_STR);
+// $sthUp->execute();
 
 // return user array from their id
 // function getUserById($id)
@@ -132,11 +130,11 @@ $sthUp->execute();
 // 	return $user;
 // }
 
-function createSeason()
+function createSeason() 
 {
 
 	global $db, $errors, $season;
-	$season =  $_POST['season'];
+	// $season =  $_POST['season'];
 
 	if (empty($season)) {
 		array_push($errors, "Une saisie est requise");
@@ -161,7 +159,7 @@ function createNotif()
 	$dateEvent = $_POST['date_event'];
 	$lieuMatch = $_POST['lieu_event'];
 	$dispoEvent = $_POST['dispo_event'];
-	$noReponse = NULL;
+	// $noReponse = NULL; // permet de rentrer des valeurs nulles dans la bdd de sql sans beug 
 
 	if (empty($dateEvent)) {
 		array_push($errors, "Date is required");
@@ -188,32 +186,6 @@ function createNotif()
 	$sth->bindParam(':id_user', $_SESSION['id'], PDO::PARAM_INT);
 	$sth->execute();
 	var_dump($_POST["date_event"]);
-}
-
-function display_error()
-{
-	global $errors;
-
-	if (count($errors) > 0) {
-		echo '<div class="error">';
-		foreach ($errors as $error) {
-			echo $error . '<br>';
-		}
-		echo '</div>';
-	}
-}
-
-function display_validation()
-{
-	global $validations;
-
-	if (count($validations) > 0) {
-		echo '<div class="success">';
-		foreach ($validations as $validation) {
-			echo $validation . '<br>';
-		}
-		echo '</div>';
-	}
 }
 
 function isLoggedIn()
@@ -261,10 +233,6 @@ $password = md5($password);
 $sql = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
 $sth = $db->prepare($sql);
 $sth->execute();
-// $results = $db->query($sql);
-
-// $query = "SELECT * FROM users WHERE username='$username' AND password='$password' LIMIT 1";
-// $result = $db->query($query);
 
 if ($sth->rowCount() == 1) { // user found
 // check if user is admin or user
@@ -397,6 +365,32 @@ function showNotif()
 			<li><?php echo $row['places_necessaires']; ?></li>
 		</ul>			
 	<?php
+	}
+}
+
+function display_error()
+{
+	global $errors;
+
+	if (count($errors) > 0) {
+		echo '<div class="error">';
+		foreach ($errors as $error) {
+			echo $error . '<br>';
+		}
+		echo '</div>';
+	}
+}
+
+function display_validation()
+{
+	global $validations;
+
+	if (count($validations) > 0) {
+		echo '<div class="success">';
+		foreach ($validations as $validation) {
+			echo $validation . '<br>';
+		}
+		echo '</div>';
 	}
 }
 ?>
