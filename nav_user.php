@@ -25,7 +25,8 @@
                     <strong><?php echo $_SESSION['user']['username']; ?></strong>
                     <i style="color: #888;">(<?php echo ucfirst($_SESSION['user']['user_type']); ?>)</i>
                 </li>
-                <li><a href="index.php"> Home</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="update.php">Settings</a></li>
                 <li><a href="notification.php"> Notifications</a></li>
             </ul>
         <?php endif ?>

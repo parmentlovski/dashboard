@@ -32,6 +32,10 @@ if (isset($_POST['login_btn'])) {
 	login();
 }
 
+if (isset($_POST['update_btn'])) {
+	update();
+}
+
 // REGISTER USER
 function register()
 {
@@ -113,6 +117,41 @@ function register()
 		}
 	}
 }
+
+function update(){
+
+	global $db, $username, $usernameUp, $errors; 
+
+	$sql_s = "SELECT username FROM users"; // similaire à un inner join on récupère la saison 
+	$sth_s = $db->prepare($sql_s);
+	$sth_s->execute();
+	$result = $sth_s->fetchAll();
+	$resultUp = $_SESSION['user']['username'];
+	var_dump($resultUp);
+
+	$usernameUp = $_POST['usernameUp'];
+
+	if (empty($_POST['usernameUp'])) {
+		array_push($errors, "username is required");
+	}
+
+	if ($result['username'] === $resultUp) {
+		array_push($errors, "Sorry... username already taken");
+	}
+
+	if(count($errors) == 0) {
+		$sqlu = "UPDATE users SET username = '$usernameUp' WHERE username = '$resultUp'";
+		$sthu = $db->prepare($sqlu);
+		$sthu->bindParam(':username', $usernameUp, PDO::PARAM_STR);
+		$sthu->execute();
+	 }
+	
+	var_dump($usernameUp);
+
+var_dump($usernameUp);
+
+}
+
 
 // $sqlUp = "UPDATE users SET username=test3 WHERE id=4";
 // $sthUp = $db->prepare($sqlUp);

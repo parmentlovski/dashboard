@@ -22,7 +22,7 @@ if (!isLoggedIn()) {
 </head>
 
 <body>
-<?php //include('nav_user.php') ?>
+<?php include('nav_user.php') ?>
   
   <h1>Home page</h1>
 
