@@ -25,6 +25,10 @@ canvas {
   background-position: right;
 }
 
+.container-new-mdp {
+  display: none;
+}
+
 .header {
   width: 40%;
   margin-top: 150px;
@@ -253,14 +257,14 @@ canvas {
 .nav-dashboard ul li a {
   color: white;
   text-decoration: none;
-  font-size: 22px;
+  font-size: 15px;
 }
 
 .nav-dashboard ul li:nth-child(2),
 .nav-dashboard ul li:nth-child(3),
 .nav-dashboard ul li:nth-child(4),
 .nav-dashboard ul li:last-child {
-  margin-top: 60px;
+  margin-top: 10px;
 }
 
 .graphique h1 {

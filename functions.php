@@ -36,6 +36,10 @@ if (isset($_POST['update_btn'])) {
 	update();
 }
 
+if (isset($_POST['add_pp_btn'])) {
+	savePp();
+}
+
 // REGISTER USER
 function register()
 {
@@ -120,36 +124,81 @@ function register()
 
 function update(){
 
-	global $db, $username, $usernameUp, $errors; 
+	global $db, $errors, $validations; 
 
-	$sql_s = "SELECT username FROM users"; // similaire à un inner join on récupère la saison 
-	$sth_s = $db->prepare($sql_s);
-	$sth_s->execute();
-	$result = $sth_s->fetchAll();
-	$resultUp = $_SESSION['user']['username'];
-	var_dump($resultUp);
-
+	$idUser = $_SESSION['user']['id'];
 	$usernameUp = $_POST['usernameUp'];
+	$emailUp = $_POST['emailUp'];
+	$passwordUp = $_POST['passwordUp'];
+	$passwordUp2 = $_POST['passwordUp2'];
+	$passwordVerif = $_POST['passwordVerif'];
 
-	if (empty($_POST['usernameUp'])) {
-		array_push($errors, "username is required");
-	}
+	$passwordVerif = md5($passwordVerif);
+	$passwordUp = md5($passwordUp);
+	$passwordUp2 = md5($passwordUp2);
 
-	if ($result['username'] === $resultUp) {
-		array_push($errors, "Sorry... username already taken");
-	}
 
-	if(count($errors) == 0) {
-		$sqlu = "UPDATE users SET username = '$usernameUp' WHERE username = '$resultUp'";
+	// echo $passwordVerif;
+
+	// $username = $_SESSION['user']['username'];
+	
+
+	$sql = "SELECT * FROM users WHERE password='$passwordVerif' AND id='$idUser'";
+	$sth = $db->prepare($sql);
+	$sth->execute();
+	$result = $sth->fetchAll(PDO::FETCH_ASSOC);
+	var_dump($result);
+
+	if (count($result) > 0) {
+		$sqlu = "UPDATE users SET username = '$usernameUp', email = '$emailUp', WHERE id = '$idUser'";
 		$sthu = $db->prepare($sqlu);
 		$sthu->bindParam(':username', $usernameUp, PDO::PARAM_STR);
+		$sthu->bindParam(':email', $emailUp, PDO::PARAM_STR);
 		$sthu->execute();
-	 }
+
+		if(!empty($passwordUp))
+		if ($passwordUp != $passwordUp2) {
+			array_push($errors, "The two passwords do not match");
+		}
+		else {
+		$sqlu = "UPDATE users SET password = '$passwordUp' WHERE id = '$idUser'";
+		$sthu = $db->prepare($sqlu);
+		$sthu->bindParam(':email', $passwordUp, PDO::PARAM_STR);
+		$sthu->execute();
+		}
+
+	}
+	else {
+		echo 'mauvais';
+	}
+
+	// $sql_s = "SELECT username FROM users WHERE username='$usernameUp'";  
+	// $sth_s = $db->prepare($sql_s);
+	// $sth_s->execute();
+	// $result = $sth_s->fetchAll();
 	
-	var_dump($usernameUp);
+	// $resultUp = $_SESSION['user']['username'];
+	
+	// var_dump($result);
 
-var_dump($usernameUp);
 
+
+	// if (empty($_POST['usernameUp'])) {
+	// 	array_push($errors, "username is required");
+	// }
+
+	// if (count($result) > 0) {
+	// 	array_push($errors, "Sorry... username already taken");
+	// }
+
+	// if(count($errors) == 0) {
+
+		
+	// 	session_destroy();
+
+	// 	header('location: login.php');
+	// 	array_push($errors, "Password is changed");
+	//  }
 }
 
 
@@ -253,6 +302,20 @@ function createNotif()
 		echo "success";
 	} else {
 		echo "Quelque chose ne va pas";
+	}
+}
+
+function savePp() {
+
+	$uploaddir = '/assets/img/profil_img/';
+	$uploadfile = $uploaddir . basename($_FILES['add-pp']['name']);
+
+	if (move_uploaded_file($_FILES['add-pp']['tmp_name'], $uploadfile)) {
+		echo "Le fichier est valide, et a été téléchargé
+			   avec succès. Voici plus d'informations :\n";
+	} else {
+		echo "Attaque potentielle par téléchargement de fichiers.
+			  Voici plus d'informations :\n";
 	}
 }
 

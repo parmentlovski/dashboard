@@ -39,7 +39,8 @@
 						</button>
 					</div>
 
-					<?php echo display_error(); ?>
+					<?php echo display_error(); echo display_validation();?>
+					
 
 				</form>
 			</div>

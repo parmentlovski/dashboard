@@ -16,12 +16,28 @@
 </section>
 
 <aside class="nav-dashboard">
+<?php 
+global $db;
 
+$idPp = $_SESSION['user']['profil_img'];
+
+
+$sql_pp = "SELECT url_img FROM profil_img WHERE id = '$idPp'";
+$sth_pp = $db->prepare($sql_pp);
+$sth_pp->bindParam(':id', $idPp, PDO::PARAM_INT);
+$sth_pp->execute();
+$result_pp = $sth_pp->fetchAll(PDO::FETCH_ASSOC); 
+
+
+?>
     <nav>
-        <?php if (isset($_SESSION['user'])) : ?>
+        <?php if (isset($_SESSION['user'])) : 
+
+            
+            ?>
             <ul>
                 <li class="profile_info">
-                    <img src="../assets/img/casque.png">
+                    <a href="test.php"> <img id="img" src="<?php echo$result_pp[0]['url_img'] ;?>"></a>
                     <strong><?php echo $_SESSION['user']['username']; ?></strong>
                     <i style="color: #888;">(<?php echo ucfirst($_SESSION['user']['user_type']); ?>)</i>
                 </li>
@@ -29,6 +45,7 @@
                 <li><a href="update.php">Settings</a></li>
                 <li><a href="notification.php"> Notifications</a></li>
             </ul>
+    
         <?php endif ?>
     </nav>
 </aside>

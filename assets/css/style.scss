@@ -25,9 +25,13 @@ canvas {
 	background-size: 85%;
 	background-position: right;
 	// background-repeat: no-repeat;
-
-
 }
+
+.container-new-mdp {
+	display: none;
+}
+
+
 
 .header {
 	width: 40%;
@@ -257,7 +261,7 @@ canvas {
 			a {
 				color: white;
 				text-decoration: none;
-				font-size: 22px;
+				font-size: 15px;
 			}
 		}
 
@@ -265,7 +269,7 @@ canvas {
 		li:nth-child(3),
 		li:nth-child(4),
 		li:last-child {
-			margin-top: 60px;
+			margin-top: 10px;
 		}
 	}
 }

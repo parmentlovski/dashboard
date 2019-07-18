@@ -22,7 +22,9 @@ if (!isLoggedIn()) {
 </head>
 
 <body>
-<?php include('nav_user.php') ?>
+<?php include('nav_user.php'); 
+include('pop-up-pp.php')
+?>
   
   <h1>Home page</h1>
 
