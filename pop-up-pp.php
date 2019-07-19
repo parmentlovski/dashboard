@@ -1,3 +1,10 @@
+
+
+</head>
+<body>
+<?php include('header.php'); ?>
+
+
 <div class="d-none">
 
 
@@ -18,3 +25,5 @@
 </div>
 
 </div>
+
+<?php include('footer.php'); ?>

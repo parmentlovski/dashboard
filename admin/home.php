@@ -1,5 +1,10 @@
+<title>Welcome to Besançon New Cowté</title>
+</head>
+<body>
+
 <?php
 include('../functions.php');
+include('../header.php'); 
 
 if (!isAdmin()) {
 	$_SESSION['msg'] = "You must log in first";
@@ -11,25 +16,9 @@ if (isset($_GET['logout'])) {
 	unset($_SESSION['user']);
 	header("location: ../login.php");
 }
-?>
-<!DOCTYPE html>
-<html>
-
-<head>
-	<title>Home</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-	<link href="assets/vendor/css/mdb.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<link href="https://fonts.googleapis.com/css?family=Graduate&display=swap" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="/assets/css/style.css">
-</head>
-
-<body>
-
-	<?php include('../nav.php') ?>
-
+ 
+ include('../nav.php') ?>
+<main class="background-dashboard">
 	<section class="graphique container-fluid">
 		<h1>Les statistiques du club</h1>
 		<div class="container">
@@ -39,12 +28,7 @@ if (isset($_GET['logout'])) {
         $sth_sco->execute();
         $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
         $result_reverse = array_reverse($result_sco);
-        var_dump($result_reverse[0]['jour_event']);
-        var_dump($result_reverse[1]['jour_event']);
-        var_dump($result_reverse[2]['jour_event']);
-        var_dump($result_reverse[3]['jour_event']);
-
-        echo $result_reverse[0]['jour_event'];
+      
 
 
         ?>
@@ -199,10 +183,5 @@ if (isset($_GET['logout'])) {
 
 
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-	<script type="text/javascript" src="assets/vendor/js/mdb.min.js"></script>
-
-</body>
-
-</html>
+</main>
+<?php include('../footer.php') ?>	

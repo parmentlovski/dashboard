@@ -134,8 +134,6 @@ function update(){
 	$passwordVerif = $_POST['passwordVerif'];
 
 	$passwordVerif = md5($passwordVerif);
-	$passwordUp = md5($passwordUp);
-	$passwordUp2 = md5($passwordUp2);
 
 
 	// echo $passwordVerif;
@@ -147,76 +145,41 @@ function update(){
 	$sth = $db->prepare($sql);
 	$sth->execute();
 	$result = $sth->fetchAll(PDO::FETCH_ASSOC);
-	var_dump($result);
+	// var_dump($result);
 
 	if (count($result) > 0) {
-		$sqlu = "UPDATE users SET username = '$usernameUp', email = '$emailUp', WHERE id = '$idUser'";
-		$sthu = $db->prepare($sqlu);
-		$sthu->bindParam(':username', $usernameUp, PDO::PARAM_STR);
-		$sthu->bindParam(':email', $emailUp, PDO::PARAM_STR);
-		$sthu->execute();
 
-		if(!empty($passwordUp))
+		if(!$passwordUp == '') { 
+
+		$passwordUp = md5($passwordUp);
+		$passwordUp2 = md5($passwordUp2);
+
+		$sqlup = "UPDATE users SET username = '$usernameUp', email = '$emailUp', password='$passwordUp' WHERE id = '$idUser'";
+		$sthup = $db->prepare($sqlup);
+		$sthup->bindParam(':username', $usernameUp, PDO::PARAM_STR);
+		$sthup->bindParam(':email', $emailUp, PDO::PARAM_STR);
+		$sthup->bindParam(':password', $passwordUp, PDO::PARAM_STR);
+		$sthup->execute();
+
 		if ($passwordUp != $passwordUp2) {
 			array_push($errors, "The two passwords do not match");
 		}
-		else {
-		$sqlu = "UPDATE users SET password = '$passwordUp' WHERE id = '$idUser'";
-		$sthu = $db->prepare($sqlu);
-		$sthu->bindParam(':email', $passwordUp, PDO::PARAM_STR);
-		$sthu->execute();
-		}
-
 	}
+		else {
+			$sqlup = "UPDATE users SET username = '$usernameUp', email = '$emailUp' WHERE id = '$idUser'";
+			$sthup = $db->prepare($sqlup);
+			$sthup->bindParam(':username', $usernameUp, PDO::PARAM_STR);
+			$sthup->bindParam(':email', $emailUp, PDO::PARAM_STR);
+			$sthup->execute();
+			}
+	}	
+	
 	else {
 		echo 'mauvais';
 	}
 
-	// $sql_s = "SELECT username FROM users WHERE username='$usernameUp'";  
-	// $sth_s = $db->prepare($sql_s);
-	// $sth_s->execute();
-	// $result = $sth_s->fetchAll();
-	
-	// $resultUp = $_SESSION['user']['username'];
-	
-	// var_dump($result);
 
-
-
-	// if (empty($_POST['usernameUp'])) {
-	// 	array_push($errors, "username is required");
-	// }
-
-	// if (count($result) > 0) {
-	// 	array_push($errors, "Sorry... username already taken");
-	// }
-
-	// if(count($errors) == 0) {
-
-		
-	// 	session_destroy();
-
-	// 	header('location: login.php');
-	// 	array_push($errors, "Password is changed");
-	//  }
 }
-
-
-// $sqlUp = "UPDATE users SET username=test3 WHERE id=4";
-// $sthUp = $db->prepare($sqlUp);
-// $sthUp->bindParam(':username', $username, PDO::PARAM_STR);
-// $sthUp->execute();
-
-// return user array from their id
-// function getUserById($id)
-// {
-// 	global $db;
-// 	$query = "SELECT * FROM users WHERE id=" . $id;
-// 	$result = mysqli_query($db, $query);
-// 	$user = mysqli_fetch_assoc($result);
-// 	echo'ici';
-// 	return $user;
-// }
 
 function createSeason()
 {
@@ -524,4 +487,3 @@ function display_validation()
 		echo '</div>';
 	}
 }
-?>
