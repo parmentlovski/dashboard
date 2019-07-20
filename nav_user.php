@@ -43,7 +43,7 @@
 
                 $totalReponse = ($result_total[0]["COUNT(DISTINCT(jour_event))"]);
          
-
+                $test = $totalReponse - $nombreNotification;
 
                 // $sql_compte_non = "SELECT COUNT(jour_event) FROM `response_parent` WHERE id_user = '$idUser' AND reponse = 0";
                 // $sth_compte_non = $db->prepare($sql_compte_non);
@@ -66,11 +66,19 @@
                     <li><a href="index.php"><i class="fas fa-home"></i>Home</a></li>
                     <li><a href="update.php"><i class="fas fa-cogs"></i>Settings</a></li>
                     <li class="nav-item"><a class="nav-link" href="notification.php"> <i class="fas fa-envelope">
-                            </i>Notifications <span class="badge badge-danger"><?php echo $nombreNotification - $totalReponse ;?></span></a></li>
+                            </i>Notifications 
+                            <?php if($test > 0) { 
+
+                                echo '<span class="badge badge-danger">' . $test . '</span>' ; } ;?>
+                            </a></li>
                     <li><a href="index.php?logout='1'">
                             <i class="fas fa-sign-out-alt"></i>Logout
                         </a></li>
                 </ul>
+
+                <?php 
+               
+                ;?>
 
                 <!-- <img class="logo-bnc" src="../assets/img/logobnc.png" alt="Logo du site"> -->
 
