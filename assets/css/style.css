@@ -6,6 +6,17 @@
           box-sizing: border-box;
 }
 
+.username {
+  font-size: 13px;
+  margin-right: 10px;
+}
+
+.user-img {
+  height: 80px;
+  background: white;
+  padding: 5px 5px 0px 5px;
+}
+
 main {
   padding-left: 200px;
   background-color: #fafafa;
@@ -38,6 +49,19 @@ ul,
 li {
   margin: 0px;
   list-style-type: none;
+}
+
+.nav-link {
+  color: #e4e4e4;
+  font-size: 14px;
+  position: relative;
+}
+
+.nav-link .badge {
+  position: absolute;
+  left: 97px;
+  top: 3px;
+  z-index: 1000000000;
 }
 
 input {

@@ -16,7 +16,7 @@ include('header.php');
 
   <div class="notification_info">
     <form method="post" action="notification.php" class="form-create">
-      <p>Pouvez vous emmener des personnes cette semaine ?
+      <p>Pouvez vous emmener des personnes ?
         <input type='checkbox' id='oui' name='reponseOui' value='oui'>
         <label for="reponseOui">Oui</label>
         <input type='checkbox' id='non' name='reponseNon' value='non'>
@@ -24,8 +24,8 @@ include('header.php');
         <label for="jour_event">Date de l'évènement</label>
         <select name="jour_event" id="jour_event" class="jour_event">
             <?php
-
-            $sql = "SELECT jour_event, lieu FROM planning LIMIT 4"; // affiche les 4 prochains évènements 
+            $statusSucces = "en attente";
+            $sql = "SELECT jour_event, lieu FROM planning WHERE status_event = '$statusSucces'"; // affiche les 4 prochains évènements 
             $sth = $db->prepare($sql);
             $sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
             $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);
@@ -43,16 +43,7 @@ include('header.php');
             }
             ?>
           </select>
-
-        <div id="block-reponse" class="dn">
-          <label for='places_reservees'>Combien de personnes ?</label>
-          <input class="test" type='number' id='places_reservees' name='places_reservees' min="0" max="">
-        </div>
-        <button type="submit" class="btn" name="reponse_btn">reponse</button>
-        <?php echo display_error(); ?>
-        <?php echo display_validation(); ?>
-
-        <?php
+          <?php
           $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, planning.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY planning.jour_event ";
           $sthC = $db->prepare($sqlC);
           $sthC->execute();
@@ -66,7 +57,8 @@ include('header.php');
         date = document.querySelector('.jour_event'); // quand on sélectionne l'option des évènements
         date.addEventListener('change', function(e) {// et lorsque l'on change d'évènements
           for (var i = 0; i < tableau_date.length; i++) { 
-            console.log(i);
+            // console.log(i);
+            
              if(tableau_date[i]['jour_event'] == date.value){
               place_disponible = tableau_date[i]['place_disponible'];
               if(place_disponible === null){
@@ -83,6 +75,15 @@ include('header.php');
         });
 
         </script>
+        <div id="block-reponse" class="dn">
+          <label for='places_reservees'>Combien de personnes ?</label>
+          <input class="test" type='number' id='places_reservees' name='places_reservees' min="0" max="">
+        </div>
+        <button type="submit" class="btn" name="reponse_btn">reponse</button>
+        <?php echo display_error(); ?>
+        <?php echo display_validation(); ?>
+
+   
 
     </form>
 
