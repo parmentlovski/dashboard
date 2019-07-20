@@ -34,7 +34,8 @@ $result_pp = $sth_pp->fetchAll(PDO::FETCH_ASSOC);
  				<li><a href="create_user.php"><i class="fas fa-users-cog"></i> Add user</a></li>
  				<li><a href="create_pp.php"><i class="fas fa-image"></i> Add pictures profil</a></li>
  				<li><a href="create_notif.php"><i class="fas fa-football-ball"></i> Add notif</a></li>
- 				<li><a href="create_season.php"><i class="fas fa-history"></i> Add season</a></li>
+				 <li><a href="create_season.php"><i class="fas fa-history"></i> Add season</a></li>
+ 				<li><a href="send_mail.php"><i class="fas fa-history"></i> Send mail</a></li>				 
  				<li><a href="home.php?logout='1'">
  						<i class="fas fa-sign-out-alt">
 						 </i>Logout

@@ -14,7 +14,6 @@ if (!isLoggedIn()) {
 ?>
 
 <?php include('nav_user.php'); 
-include('pop-up-pp.php')
 ?>
 <main>
   
