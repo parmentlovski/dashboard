@@ -25,7 +25,7 @@ include('header.php');
         <select name="jour_event" id="jour_event" class="jour_event">
             <?php
             $statusSucces = "en attente";
-            $sql = "SELECT jour_event, lieu FROM planning WHERE status_event = '$statusSucces'"; // affiche les 4 prochains évènements 
+            $sql = "SELECT jour_event, lieu FROM planning WHERE status_event = '$statusSucces'"; 
             $sth = $db->prepare($sql);
             $sth->bindParam(':jour_event', $dateEvent, PDO::PARAM_STR);
             $sth->bindParam(':lieu', $lieuMatch, PDO::PARAM_STR);

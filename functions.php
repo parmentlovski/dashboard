@@ -388,8 +388,6 @@ function reponse()
 	}
 	if (count($errors) == 0) {
 
-
-
 		if (!empty($_POST['reponseOui'])) {
 			if (empty($dateE)) {
 				array_push($errors, "Date is required");
@@ -398,20 +396,20 @@ function reponse()
 				array_push($errors, "Number is required");
 			}
 
-			$sqlRp = "SELECT places_reservees FROM response_parent";
-			$sthRp = $db->prepare($sqlRp);
-			$sthRp->execute();
-			$placesReservees = $sthRp->fetchAll(PDO::FETCH_ASSOC);
-			$placesReserveesArray = $placesReservees[0]['places_reservees'];
-			// echo($placesReserveesArray);
-
-			$sqlOui = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees, evenement_vu) VALUES('$dateE', '$name', true, '$placeReservees')";
+			$sqlOui = "INSERT INTO response_parent (jour_event, id_user, reponse, places_reservees) VALUES('$dateE', '$name', true, '$placeReservees')";
 			$sthOui = $db->prepare($sqlOui);
 			$sthOui->bindParam(':jour_event', $dateE, PDO::PARAM_STR);
 			$sthOui->bindParam(':id_user', $name, PDO::PARAM_STR);
 			$sthOui->bindValue(':reponse', true, PDO::PARAM_BOOL);
 			$sthOui->bindParam(':places_reservees', $placeReservees, PDO::PARAM_INT);
 			$sthOui->execute();
+
+			$sqlRp = "SELECT places_reservees FROM response_parent";
+			$sthRp = $db->prepare($sqlRp);
+			$sthRp->execute();
+			$placesReservees = $sthRp->fetchAll(PDO::FETCH_ASSOC);
+			$placesReserveesArray = $placesReservees[0]['places_reservees'];
+			// echo($placesReserveesArray);
 
 			$sql = "SELECT places_necessaires FROM planning WHERE jour_event='$dateE' ";
 			$sth = $db->prepare($sql);
@@ -431,14 +429,16 @@ function reponse()
 			
 				array_push($errors, "Le nombre de places nécessaires est atteinte");
 			}
-			if ($countArray = $placesNecessairesArray) {
-				$statusSucces = "succes";
-					$sql_status = "UPDATE planning SET status_event = '$statusSucces' WHERE jour_event = '$dateE'";
-					$sth_status = $db->prepare($sql_status);
-					$sth_status->bindParam(':status_event', $dateE, PDO::PARAM_STR);
-					$sth_status->execute();
-			}
 
+			if ($countArray === $placesNecessairesArray) {
+
+			$statusSucces = "succes";
+			$sql_status = "UPDATE planning SET status_event = '$statusSucces' WHERE jour_event = '$dateE'";
+			$sth_status = $db->prepare($sql_status);
+			$sth_status->bindParam(':status_event', $statusSucces, PDO::PARAM_STR);
+			$sth_status->execute();
+			}
+			
 			if ($countArray < $placesNecessairesArray) {
 				$placesDispo = $placesNecessairesArray - $countArray;
 				array_push($validations, "Il reste " . $placesDispo . " places");

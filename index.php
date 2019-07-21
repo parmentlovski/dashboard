@@ -13,7 +13,7 @@ if (!isLoggedIn()) {
 }
 ?>
 
-<?php include('nav_user.php'); 
+<?php include('nav.php'); 
 ?>
 <main>
   

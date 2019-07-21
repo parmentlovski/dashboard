@@ -19,7 +19,7 @@ $ppUrl = $result_pp[0]["url_img"];
 
 
 ?>
-<?php include('nav_user.php') ?>
+<?php include('nav.php') ?>
 
 <main>
 
