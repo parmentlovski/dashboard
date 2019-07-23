@@ -1,20 +1,17 @@
-<title>Welcome to Besançon New Cowté</title>
-</head>
-<body>
-
 <?php
 include('functions.php');
 include('header.php');
-
+include('nav.php');
 
 if (!isLoggedIn()) {
   $_SESSION['msg'] = "You must log in first";
   header('location: login.php');
 }
 ?>
+<title>Welcome to Besançon New Cowté</title>
+</head>
+<body>
 
-<?php include('nav.php'); 
-?>
 <main>
   
   <h1>Home page</h1>

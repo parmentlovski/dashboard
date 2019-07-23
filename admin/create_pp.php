@@ -1,10 +1,10 @@
+<?php include('../functions.php');
+ include('../header.php');
+include('../nav.php') ?>
+
 <title>Add pictures</title>
 </head>
 <body>
-
-<?php include('../functions.php');
- include('../header.php');
-// include('../nav.php') ?>
 
 <div class="header">
 		<h2>Create user</h2>

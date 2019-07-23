@@ -537,22 +537,6 @@ textarea:-ms-input-placeholder {
 }
 
 /*//////////////////////// ADMIN ////////////////////////////////////////// */
-.top-dashboard {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  height: 10%;
-  background-color: white;
-}
-
-.top-dashboard h1 {
-  color: #CC9041;
-  text-align: center;
-  margin-left: 21%;
-  margin-top: 20px;
-  font-family: 'Graduate', sans-serif;
-}
-
 .nav-dashboard {
   position: fixed;
   top: 0;
@@ -866,11 +850,6 @@ textarea:-ms-input-placeholder {
 }
 
 /*//////////////////////// MAIL ////////////////////////////////////////// */
-#send_mail {
-  background-color: black;
-  color: white;
-}
-
 /*//////////////////////// UPDATE ////////////////////////////////////////// */
 .container-new-mdp {
   display: none;

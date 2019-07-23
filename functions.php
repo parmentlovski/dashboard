@@ -121,7 +121,6 @@ function update()
 	$passwordVerif = md5($passwordVerif);
 
 
-
 	// ($namePp);
 	$userId = $_SESSION['user']['id'];
 
@@ -156,7 +155,7 @@ function update()
 			$sth_up = $db->prepare($sql_up);
 			$sth_up->bindParam(':username', $usernameUp, PDO::PARAM_STR);
 			$sth_up->execute();
-			array_push($errors, "2");
+			// array_push($errors, "2");
 		}
 	} else {
 		echo 'mauvais password';
@@ -206,7 +205,7 @@ function createNotif()
 	$sth->execute();
 	$sql_b = "INSERT INTO response_parent (jour_event, id_user) VALUES(:jour_event, :id_user)";
 	$sth = $db->prepare($sql_b);
-	$sth->bindParam(':jour_event', $_POST["date_event"], PDO::PARAM_STR);
+	$sth->bindParam(':jour_event', $_POST['date_event'], PDO::PARAM_STR);
 	$sth->bindParam(':id_user', $_SESSION['id'], PDO::PARAM_INT);
 	$sth->execute();
 
@@ -428,6 +427,7 @@ function reponse()
 			if ($countArray > $placesNecessairesArray) {
 			
 				array_push($errors, "Le nombre de places nécessaires est atteinte");
+
 			}
 
 			if ($countArray === $placesNecessairesArray) {

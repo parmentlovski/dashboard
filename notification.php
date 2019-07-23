@@ -1,13 +1,13 @@
-<title>Notifications</title>
-</head>
-<body>
-
 <?php
 include('functions.php');
 include('header.php');
+include('nav.php');
+
 ?>
 
-  <?php include('nav_user.php') ?>
+<title>Notifications</title>
+</head>
+<body>
 
   <div class="header">
     <h2>Notifications</h2>

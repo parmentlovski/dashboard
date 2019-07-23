@@ -1,7 +1,7 @@
 <?php
 include('../functions.php');
-include('../header.php');
-
+include('../header.php'); 
+include('../nav.php');
 
 if (!isLoggedIn()) {
     $_SESSION['msg'] = "You must log in first";
@@ -16,11 +16,6 @@ addition();
 <body>
 
     <main>
-
-
-        <?php
-        include('../nav.php');
-        ?>
         <?php
         function addition()
         {
@@ -90,21 +85,18 @@ addition();
             }
         }
 
-
         ?>
         <?php $sql_sco = "SELECT SUM(places_reservees) AS places_reservees, planning.jour_event, places_necessaires FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY response_parent.jour_event DESC LIMIT 4";
         $sth_sco = $db->prepare($sql_sco);
         $sth_sco->execute();
         $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
         $result_reverse = array_reverse($result_sco);
-        var_dump($result_reverse[0]['jour_event']);
-        var_dump($result_reverse[1]['jour_event']);
-        var_dump($result_reverse[2]['jour_event']);
-        var_dump($result_reverse[3]['jour_event']);
+        // var_dump($result_reverse[0]['jour_event']);
+        // var_dump($result_reverse[1]['jour_event']);
+        // var_dump($result_reverse[2]['jour_event']);
+        // var_dump($result_reverse[3]['jour_event']);
 
-        echo $result_reverse[0]['jour_event'];
-
-
+        // echo $result_reverse[0]['jour_event'];
         ?>
 
         <canvas id="canvas2"></canvas>

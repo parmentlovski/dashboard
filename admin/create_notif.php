@@ -1,10 +1,10 @@
-<title>Add notification</title>
-</head>
-<body>
-
 <?php include('../functions.php') ;
  include('../header.php'); 
   include('../nav.php') ?>
+
+<title>Add notification</title>
+</head>
+<body>
 
 	<div class="header">
 		<h2>Create notification</h2>

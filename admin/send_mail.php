@@ -1,19 +1,20 @@
     <?php include('../functions.php');
     include('../header.php');
     include('../nav.php');
-    
-
+  
       global $db;
       $recupMail = "";
       $theRecupMail = $db->prepare("SELECT `email`, `username` FROM `users`");
       if ($theRecupMail->execute(array())) {
         $recupMail  = $theRecupMail->fetchAll(PDO::FETCH_ASSOC);
       }
+      var_dump($recupMail);
       
       ?>
-
-      <form id="send_mail" method="post" action="create_season.php">
-        <textarea name="textarea" id="" cols="40" rows="40"></textarea>
+  <main>
+    <section>
+      <form class="form-create" method="post" action="send_mail.php">
+        <textarea name="textarea" id="" cols="10" rows="10"></textarea>
         <?php
         foreach ($recupMail as $row) {
           echo '<input type="checkbox" name="users[]" value="' . $row['email'] . '" /> ' . $row['username'];
@@ -27,11 +28,11 @@
       </form>
 
     </section>
+  </main>
     <?php
     if (isset($_REQUEST['users'])) {
       $users = $_REQUEST['users'];
     }
-
 
     if (isset($_POST['submitt'])) {
       send_mail();
@@ -54,4 +55,4 @@ function send_mail(){
     }
 
     include('../footer.php');
-    ?>
+    
