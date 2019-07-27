@@ -9,8 +9,7 @@ if (!isAdmin()):
       // Met fin au script par mesure de sécurité
       die();
     }
-    endif ;
-  }?>
+    endif ;?>
 
 <title>Add pictures</title>
 </head>

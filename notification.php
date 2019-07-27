@@ -29,6 +29,7 @@ include('nav.php');
         <label for="reponseNon">Non</label>
         <label for="jour_event">Date de l'évènement</label>
         <select name="jour_event" id="jour_event" class="jour_event">
+          <option id="date" max = 0>Choisir date</option>
           <?php
           $statusSucces = "en attente";
           $sql = "SELECT jour_event, lieu FROM planning WHERE status_event = '$statusSucces'";
@@ -49,6 +50,7 @@ include('nav.php');
                                                                         }
                                                                         ?>
         </select>
+                                                                   
         <?php
         $sqlC = "SELECT SUM(places_reservees) as nombre_inscrit, planning.jour_event, places_necessaires, places_necessaires - SUM(places_reservees) AS place_disponible FROM planning LEFT JOIN response_parent ON response_parent.jour_event = planning.jour_event GROUP BY planning.jour_event ";
         $sthC = $db->prepare($sqlC);
@@ -62,10 +64,9 @@ include('nav.php');
           // console.log(tableau_date[i]['place_disponible']);
 
           date = document.querySelector('.jour_event'); // quand on sélectionne l'option des évènements
-          date.addEventListener('change', function(e) { // et lorsque l'on change d'évènements
+           date.addEventListener('change', function(e) { // et lorsque l'on change d'évènements
             for (var i = 0; i < tableau_date.length; i++) {
               // console.log(i);
-
               if (tableau_date[i]['jour_event'] == date.value) {
                 place_disponible = tableau_date[i]['place_disponible'];
                 if (place_disponible === null) {

@@ -193,7 +193,6 @@ addition();
         $sth_sco = $db->prepare($sql_sco);
         $sth_sco->execute();
         $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
-        var_dump($result_sco);
         
         ?>
 
