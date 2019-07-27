@@ -1,6 +1,21 @@
-<?php include('../functions.php');
- include('../header.php'); 
-include('../nav.php') ?>
+<?php include('functions.php');
+ include('header.php'); 
+include('nav.php');
+
+if (!isAdmin()):
+    if ("GET" === $_SERVER["REQUEST_METHOD"]) {
+      // Renvoie l'utilisateur à la racine du serveur
+      header("Location: /");
+      // Met fin au script par mesure de sécurité
+      die();
+    }
+    endif ;
+
+if (!isLoggedIn()) {
+    $_SESSION['msg'] = "You must log in first";
+    header('location: login.php');
+}
+?>
 
 <title>Create user</title>
 </head>
@@ -65,4 +80,4 @@ include('../nav.php') ?>
 		</div>
 	</form>
 
-<?php include('../footer.php') ?>	
+<?php include('footer.php') ?>	

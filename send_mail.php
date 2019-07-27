@@ -1,6 +1,14 @@
-    <?php include('../functions.php');
-    include('../header.php');
-    include('../nav.php');
+    <?php include('functions.php');
+    include('header.php');
+    include('nav.php');
+    if (!isAdmin()):
+    if ("GET" === $_SERVER["REQUEST_METHOD"]) {
+      // Renvoie l'utilisateur à la racine du serveur
+      header("Location: /");
+      // Met fin au script par mesure de sécurité
+      die();
+    }
+    endif ;
   
       global $db;
       $recupMail = "";
@@ -8,7 +16,6 @@
       if ($theRecupMail->execute(array())) {
         $recupMail  = $theRecupMail->fetchAll(PDO::FETCH_ASSOC);
       }
-      var_dump($recupMail);
       
       ?>
   <main>
@@ -54,5 +61,5 @@ function send_mail(){
       }
     }
 
-    include('../footer.php');
+    include('footer.php');
     

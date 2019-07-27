@@ -91,7 +91,7 @@
                     <li><a href="create_notif.php"><i class="fas fa-football-ball"></i> Add notif</a></li>
                     <li><a href="create_season.php"><i class="fas fa-history"></i> Add season</a></li>
                     <li><a href="send_mail.php"><i class="fas fa-envelope"></i> Send mail</a></li>
-                    <li><a href="admin/home.php?logout='1'">
+                    <li><a href="home.php?logout='1'">
                             <i class="fas fa-sign-out-alt">
                             </i>Logout
                         </a>

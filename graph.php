@@ -1,7 +1,16 @@
 <?php
-include('../functions.php');
-include('../header.php'); 
-include('../nav.php');
+include('functions.php');
+include('header.php'); 
+include('nav.php');
+
+if (!isAdmin()):
+    if ("GET" === $_SERVER["REQUEST_METHOD"]) {
+      // Renvoie l'utilisateur à la racine du serveur
+      header("Location: /");
+      // Met fin au script par mesure de sécurité
+      die();
+    }
+    endif ;
 
 if (!isLoggedIn()) {
     $_SESSION['msg'] = "You must log in first";
@@ -180,13 +189,11 @@ addition();
         </script>
 
         <?php
-        $sql_sco = "SELECT username, SUM(reponse) FROM users 
-         LEFT JOIN response_parent ON response_parent.id_user = users.id
-         WHERE reponse = 1 GROUP BY id_user ORDER BY SUM(reponse) DESC LIMIT 5";
+        $sql_sco = "SELECT COUNT(DISTINCT(jour_event)), username, reponse FROM response_parent  LEFT JOIN users ON users.id = response_parent.id_user WHERE reponse = true GROUP BY id_user ORDER BY SUM(reponse) DESC LIMIT 5";
         $sth_sco = $db->prepare($sql_sco);
         $sth_sco->execute();
         $result_sco = $sth_sco->fetchAll(PDO::FETCH_ASSOC);
-        // var_dump($result_sco[0]['username']);
+        var_dump($result_sco);
         
         ?>
 
@@ -199,7 +206,7 @@ addition();
                     datasets: [{
                         label: "Population (millions)",
                         backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850"],
-                        data:[<?php echo $result_sco[0]['SUM(reponse)']; ?>, <?php echo $result_sco[1]['SUM(reponse)']; ?>, <?php echo $result_sco[2]['SUM(reponse)']; ?>, <?php echo $result_sco[3]['SUM(reponse)']; ?>, <?php echo $result_sco[4]['SUM(reponse)']; ?>, 0]
+                        data:[<?php echo $result_sco[0]["COUNT(DISTINCT(jour_event))"]; ?>, <?php echo $result_sco[1]["COUNT(DISTINCT(jour_event))"]; ?>, <?php echo $result_sco[2]["COUNT(DISTINCT(jour_event))"]; ?>, <?php echo $result_sco[3]["COUNT(DISTINCT(jour_event))"]; ?>, <?php echo $result_sco[4]["COUNT(DISTINCT(jour_event))"]; ?>, 0]
                     }]
                 },
                 options: {
@@ -216,4 +223,4 @@ addition();
 
 
 
-   <?php include('../footer.php'); ?>
+   <?php include('footer.php'); ?>

@@ -1,7 +1,17 @@
 
-<?php include('../functions.php');
- include('../header.php');
-include('../nav.php') ?>
+<?php include('functions.php');
+ include('header.php');
+include('nav.php') ;
+
+if (!isAdmin()):
+    if ("GET" === $_SERVER["REQUEST_METHOD"]) {
+      // Renvoie l'utilisateur à la racine du serveur
+      header("Location: /");
+      // Met fin au script par mesure de sécurité
+      die();
+    }
+    endif ;
+?>
 
 <title>Create season</title>
 </head>
@@ -28,4 +38,4 @@ include('../nav.php') ?>
 	</form>
 
 
-<?php include('../footer.php') ?>	
+<?php include('footer.php') ?>	

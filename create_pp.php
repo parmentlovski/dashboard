@@ -1,6 +1,16 @@
-<?php include('../functions.php');
- include('../header.php');
-include('../nav.php') ?>
+<?php include('functions.php');
+ include('header.php');
+include('nav.php');
+
+if (!isAdmin()):
+    if ("GET" === $_SERVER["REQUEST_METHOD"]) {
+      // Renvoie l'utilisateur à la racine du serveur
+      header("Location: /");
+      // Met fin au script par mesure de sécurité
+      die();
+    }
+    endif ;
+  }?>
 
 <title>Add pictures</title>
 </head>
@@ -39,5 +49,5 @@ include('../nav.php') ?>
             </div>
         </section>
 	
-<?php include('../footer.php') ?>	
+<?php include('footer.php') ?>	
 
