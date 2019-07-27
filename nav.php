@@ -85,12 +85,13 @@
                         <strong><?php echo $_SESSION['user']['username']; ?></strong><br>
                         <a> <img id="img" src="../assets/img/profil_img/user_profile.png"></a>
                     </li>
-                    <li><a href="graph.php"><i class="fas fa-chart-pie"></i>Statistics</a></li>
-                    <li><a href="create_user.php"><i class="fas fa-users-cog"></i> Add user</a></li>
-                    <li><a href="create_pp.php"><i class="fas fa-image"></i> Add pictures profil</a></li>
-                    <li><a href="create_notif.php"><i class="fas fa-football-ball"></i> Add notif</a></li>
-                    <li><a href="create_season.php"><i class="fas fa-history"></i> Add season</a></li>
-                    <li><a href="send_mail.php"><i class="fas fa-envelope"></i> Send mail</a></li>
+                    <li><a href="liste_member.php"><i class="fas fa-users"></i>Liste des membres</a></li>
+                    <li><a href="graph.php"><i class="fas fa-chart-pie"></i>Statistiques</a></li>
+                    <li><a href="create_user.php"><i class="fas fa-users-cog"></i> Ajouter un utilisateur</a></li>
+                    <li><a href="create_pp.php"><i class="fas fa-image"></i> Ajouter un avatar</a></li>
+                    <li><a href="create_notif.php"><i class="fas fa-football-ball"></i> Ajouter un évènement</a></li>
+                    <li><a href="create_season.php"><i class="fas fa-history"></i> Ajouter une saison</a></li>
+                    <li><a href="send_mail.php"><i class="fas fa-envelope"></i>Envoyer un mail</a></li>
                     <li><a href="home.php?logout='1'">
                             <i class="fas fa-sign-out-alt">
                             </i>Logout
